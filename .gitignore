@@ -4,6 +4,9 @@
 /data/summary.csv
 /data/logs/
 
+# Literature review papers
+/Lit_rew/
+
 # Large model checkpoints
 **/checkpoints/
 *.pth
