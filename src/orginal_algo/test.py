@@ -119,15 +119,6 @@ INDIVIDUAL SPECIES PERFORMANCE:
     with open(details_path_1, "w") as f:
         f.write(report_content)
     print(f"=> Saved details log to {details_path_1}")
-    
-    # Save a copy to the root workspace directory
-    details_path_2 = "/Users/aakashrajput/MachineLearning/Exoplanets/details.txt"
-    try:
-        with open(details_path_2, "w") as f:
-            f.write(report_content)
-        print(f"=> Saved details copy to {details_path_2}")
-    except Exception as e:
-        print(f"=> Could not save root copy: {e}")
 
     fig, axes = plt.subplots(3, 4, figsize=(20, 15))
     axes = axes.flatten()
