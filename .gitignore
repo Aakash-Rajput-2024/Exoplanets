@@ -1,5 +1,7 @@
 # Large datasets and cache
-/data/cache/
+/data/cache*/
+/data/**/*.pt
+/data/*.pt
 /data/inara_1by3/
 /data/summary.csv
 /data/logs/

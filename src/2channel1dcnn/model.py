@@ -1,5 +1,9 @@
 import torch
 import torch.nn as nn
+try:
+    from torchsummary import summary
+except ImportError:
+    summary = None
 
 class NasaInaraModel(nn.Module):
     def __init__(self, in_channels=1, sequence_length=4379):
@@ -54,5 +58,10 @@ if __name__ == "__main__":
     dummy_input = torch.randn(32, 2, 4379) 
     model = NasaInaraModel(in_channels=2, sequence_length=4379)
     output = model(dummy_input)
+    
+    if summary is not None:
+        print(f"model size = {summary(model,(2,4379))}")
+    else:
+        print("torchsummary not installed, skipping summary printing.")
     print(f"Input shape: {dummy_input.shape}")
     print(f"Output shape: {output.shape}")

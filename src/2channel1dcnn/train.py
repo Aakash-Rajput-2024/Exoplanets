@@ -17,15 +17,11 @@ except ImportError:
             if total and (i + 1) % max(1, total // 10) == 0:
                 print(f"{desc} Progress: {i+1}/{total} ({(i+1)/total*100:.0f}%)")
 
-try:
-    from dataloader import load_cached_data
-except ImportError:
-    from src.orginal_algo.dataloader import load_cached_data
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    from model import NasaInaraModel
-except ImportError:
-    from src.orginal_algo.model import NasaInaraModel
+from dataloader import load_cached_data
+from model import NasaInaraModel
 
 BATCH_SIZE = 1024
 LEARNING_RATE = 0.001
@@ -36,10 +32,10 @@ NORMALIZE_INPUTS = True
 SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
 SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
 CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/orginal_algo/charts"
+CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/2channel1dcnn/charts"
 
-CHECKPOINT_DIR = "checkpoints"
-LOG_DIR = "runs/inara_experiment"
+CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/2channel1dcnn/checkpoints"
+LOG_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/2channel1dcnn/runs/inara_experiment"
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(CHARTS_DIR, exist_ok=True)
 

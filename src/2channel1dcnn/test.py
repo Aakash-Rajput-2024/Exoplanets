@@ -5,20 +5,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from torch.utils.data import DataLoader, random_split
 
-try:
-    from dataloader import load_cached_data
-except ImportError:
-    from src.orginal_algo.dataloader import load_cached_data
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    from model import NasaInaraModel
-except ImportError:
-    from src.orginal_algo.model import NasaInaraModel
+from dataloader import load_cached_data
+from model import NasaInaraModel
 
 SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
 SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
 CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/orginal_algo/charts"
+CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/2channel1dcnn/charts"
 os.makedirs(CHARTS_DIR, exist_ok=True)
 
 NORMALIZE_INPUTS = True
@@ -48,7 +44,7 @@ def evaluate():
     print(f"Detected channels: {in_channels}, sequence length: {seq_len}")
     model = NasaInaraModel(in_channels=in_channels, sequence_length=seq_len).to(device)
     
-    checkpoint_path = "checkpoints/model_best.pth"
+    checkpoint_path = "/Users/aakashrajput/MachineLearning/Exoplanets/src/2channel1dcnn/checkpoints/model_best.pth"
     if os.path.exists(checkpoint_path):
         checkpoint = torch.load(checkpoint_path, map_location=device)
         model.load_state_dict(checkpoint['state_dict'])
@@ -56,7 +52,7 @@ def evaluate():
     else:
         print("No checkpoint found. Evaluating random model.")
 
-    eval_size = min(300, len(val_dataset))
+    eval_size = min(1000, len(val_dataset))
     eval_subset, _ = random_split(
         val_dataset, [eval_size, len(val_dataset) - eval_size], generator=torch.Generator().manual_seed(42)
     )
@@ -114,7 +110,7 @@ INDIVIDUAL SPECIES PERFORMANCE:
         report_content += f"{col:<11} | {r2_scores[i]:<8.4f} | {rmse_scores[i]:<8.4f} | {mae_scores[i]:<10.4f}\n"
     report_content += "================================================================================\n"
 
-    # Save to src/orginal_algo/details.txt
+    # Save to src/2channel1dcnn/details.txt
     details_path_1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "details.txt")
     with open(details_path_1, "w") as f:
         f.write(report_content)
