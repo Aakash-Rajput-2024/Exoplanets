@@ -6,20 +6,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from torch.utils.data import DataLoader, random_split
 
-try:
-    from dataloader import load_cached_data
-except ImportError:
-    from src.transformerarch.dataloader import load_cached_data
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    from model import NasaInaraTransformer
-except ImportError:
-    from src.transformerarch.model import NasaInaraTransformer
+from dataloader import load_cached_data
+from model import NasaInaraModel
 
 SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
 SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/charts"
+CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache"
+CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/optimized1dcnn/charts"
 os.makedirs(CHARTS_DIR, exist_ok=True)
 
 NORMALIZE_INPUTS = True
@@ -37,22 +33,17 @@ def calculate_metrics(y_true, y_pred):
     return r2, rmse
 
 def evaluate():
-    device = torch.device(
-        "cuda" if torch.cuda.is_available()
-        else "mps" if torch.backends.mps.is_available()
-        else "cpu"
-    )
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     _, val_dataset = load_cached_data(
         CACHE_DIR, SUMMARY_PATH, SPECTRA_DIR, 
-        normalize_inputs=NORMALIZE_INPUTS,
-        feature_mode="planet"
+        normalize_inputs=NORMALIZE_INPUTS
     )
     
     in_channels = val_dataset[0][0].shape[0]
     seq_len = val_dataset[0][0].shape[1]
     print(f"Detected channels: {in_channels}, sequence length: {seq_len}")
-    model = NasaInaraTransformer(in_channels=in_channels, sequence_length=seq_len).to(device)
+    model = NasaInaraModel(in_channels=in_channels, sequence_length=seq_len).to(device)
     # Generate torchinfo summary string
     try:
         model_summary_str = str(torchinfo.summary(model, input_size=(1, in_channels, seq_len), device="cpu", verbose=0))
@@ -60,7 +51,7 @@ def evaluate():
         model_summary_str = f"Error generating model summary: {e}"
     
     
-    checkpoint_path = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/checkpoints/model_best.pth"
+    checkpoint_path = "/Users/aakashrajput/MachineLearning/Exoplanets/src/optimized1dcnn/checkpoints/model_best.pth"
     if os.path.exists(checkpoint_path):
         checkpoint = torch.load(checkpoint_path, map_location=device)
         model.load_state_dict(checkpoint['state_dict'])
@@ -102,8 +93,8 @@ def evaluate():
     report_content = f"""================================================================================
 EXOPLANET ATMOSPHERIC RETRIEVAL EVALUATION REPORT
 ================================================================================
-Model: NasaInaraTransformer (1-Channel Hybrid, Wavelength <= 2.0 um)
-Features: 1 channel (planet_signal)
+Model: NasaInaraModel (2-Channel, Wavelength <= 2.0 um)
+Features: 2 channels (star_planet_signal + planet_signal)
 Sequence Length: {seq_len}
 Channels: {in_channels}
 Targets: Standardized Column-wise Linear Abundances (12 Species)
@@ -126,7 +117,7 @@ INDIVIDUAL SPECIES PERFORMANCE:
         report_content += f"{col:<11} | {r2_scores[i]:<8.4f} | {rmse_scores[i]:<8.4f} | {mae_scores[i]:<10.4f}\n"
     report_content += "================================================================================\n"
 
-    # Save to src/transformerarch/details.txt
+    # Save to src/2channel1dcnn/details.txt
     details_path_1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "details.txt")
     report_content += f"\n\nMODEL ARCHITECTURE SUMMARY:\n{'-'*80}\n{model_summary_str}\n{'-'*80}\n"
     with open(details_path_1, "w") as f:

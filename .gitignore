@@ -31,3 +31,10 @@ venvEXO/
 
 # MacOS system files
 .DS_Store
+
+# Causal cnn_trnas generated outputs
+/src/causal/cnn_trnas/checkpoints/
+/src/causal/cnn_trnas/runs/
+/src/causal/cnn_trnas/charts/
+/src/causal/cnn_trnas/environment_probe/
+/src/causal/cnn_trnas/details.txt

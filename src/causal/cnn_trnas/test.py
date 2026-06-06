@@ -6,23 +6,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from torch.utils.data import DataLoader, random_split
 
-try:
-    from dataloader import load_cached_data
-except ImportError:
-    from src.transformerarch.dataloader import load_cached_data
-
-try:
-    from model import NasaInaraTransformer
-except ImportError:
-    from src.transformerarch.model import NasaInaraTransformer
+from dataloader import load_cached_data_with_envs
+from model import NasaInaraTransformer
 
 SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
 CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/charts"
-os.makedirs(CHARTS_DIR, exist_ok=True)
+CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/charts"
+CHECKPOINT_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/checkpoints/model_best.pth"
 
-NORMALIZE_INPUTS = True
+os.makedirs(CHARTS_DIR, exist_ok=True)
 
 TARGET_COLUMNS = [
     'H2O', 'CO2', 'O2', 'N2', 'CH4', 'N2O', 
@@ -43,30 +35,28 @@ def evaluate():
         else "cpu"
     )
     
-    _, val_dataset = load_cached_data(
-        CACHE_DIR, SUMMARY_PATH, SPECTRA_DIR, 
-        normalize_inputs=NORMALIZE_INPUTS,
-        feature_mode="planet"
-    )
+    _, val_dataset, _ = load_cached_data_with_envs(CACHE_DIR, SUMMARY_PATH)
+    val_x = val_dataset.tensors[0]
+    val_y = val_dataset.tensors[1]
     
-    in_channels = val_dataset[0][0].shape[0]
-    seq_len = val_dataset[0][0].shape[1]
+    in_channels = val_x.shape[1]
+    seq_len = val_x.shape[2]
     print(f"Detected channels: {in_channels}, sequence length: {seq_len}")
+    
     model = NasaInaraTransformer(in_channels=in_channels, sequence_length=seq_len).to(device)
-    # Generate torchinfo summary string
+    
     try:
         model_summary_str = str(torchinfo.summary(model, input_size=(1, in_channels, seq_len), device="cpu", verbose=0))
     except Exception as e:
         model_summary_str = f"Error generating model summary: {e}"
     
-    
-    checkpoint_path = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/checkpoints/model_best.pth"
-    if os.path.exists(checkpoint_path):
-        checkpoint = torch.load(checkpoint_path, map_location=device)
+    if os.path.exists(CHECKPOINT_PATH):
+        checkpoint = torch.load(CHECKPOINT_PATH, map_location=device)
         model.load_state_dict(checkpoint['state_dict'])
+        model.to(device)
         print("Loaded model from checkpoint.")
     else:
-        print("No checkpoint found. Evaluating random model.")
+        print(f"No checkpoint found at {CHECKPOINT_PATH}. Evaluating random model.")
 
     eval_size = min(5000, len(val_dataset))
     eval_subset, _ = random_split(
@@ -79,7 +69,7 @@ def evaluate():
     all_trues = []
 
     with torch.no_grad():
-        for spectra, targets in eval_loader:
+        for spectra, targets, _envs in eval_loader:
             spectra, targets = spectra.to(device), targets.to(device)
             preds = model(spectra)
             all_preds.append(preds.cpu().numpy())
@@ -98,11 +88,10 @@ def evaluate():
     mae_scores = np.mean(np.abs(y_true - y_pred), axis=0)
     label_suffix = " (abundance)"
 
-    # Generate details.txt standardized performance report
     report_content = f"""================================================================================
 EXOPLANET ATMOSPHERIC RETRIEVAL EVALUATION REPORT
 ================================================================================
-Model: NasaInaraTransformer (1-Channel Hybrid, Wavelength <= 2.0 um)
+Model: NasaInaraTransformer (Causal Augmented, Wavelength <= 2.0 um)
 Features: 1 channel (planet_signal)
 Sequence Length: {seq_len}
 Channels: {in_channels}
@@ -126,12 +115,11 @@ INDIVIDUAL SPECIES PERFORMANCE:
         report_content += f"{col:<11} | {r2_scores[i]:<8.4f} | {rmse_scores[i]:<8.4f} | {mae_scores[i]:<10.4f}\n"
     report_content += "================================================================================\n"
 
-    # Save to src/transformerarch/details.txt
-    details_path_1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "details.txt")
+    details_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "details.txt")
     report_content += f"\n\nMODEL ARCHITECTURE SUMMARY:\n{'-'*80}\n{model_summary_str}\n{'-'*80}\n"
-    with open(details_path_1, "w") as f:
+    with open(details_path, "w") as f:
         f.write(report_content)
-    print(f"=> Saved details log to {details_path_1}")
+    print(f"=> Saved details log to {details_path}")
 
     fig, axes = plt.subplots(3, 4, figsize=(20, 15))
     axes = axes.flatten()
@@ -170,7 +158,7 @@ INDIVIDUAL SPECIES PERFORMANCE:
     model.train()
     mc_samples = []
     mc_loader = DataLoader(eval_subset, batch_size=20, shuffle=False)
-    mc_spectra, mc_targets = next(iter(mc_loader))
+    mc_spectra, mc_targets, _mc_envs = next(iter(mc_loader))
     mc_spectra = mc_spectra.to(device)
 
     with torch.no_grad():
@@ -179,8 +167,6 @@ INDIVIDUAL SPECIES PERFORMANCE:
             mc_samples.append(preds.cpu().numpy())
 
     mc_predictions = np.stack(mc_samples, axis=0)
-    
-    # Load scaling stats and inverse-transform uncertainty samples
     mc_predictions = mc_predictions * std_y + mean_y
     true_vals = mc_targets.numpy() * std_y + mean_y
     

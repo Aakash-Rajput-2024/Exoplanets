@@ -1,3 +1,4 @@
+import torchinfo
 import os
 import torch
 import numpy as np
@@ -43,6 +44,12 @@ def evaluate():
     seq_len = val_dataset[0][0].shape[1]
     print(f"Detected channels: {in_channels}, sequence length: {seq_len}")
     model = NasaInaraModel(in_channels=in_channels, sequence_length=seq_len).to(device)
+    # Generate torchinfo summary string
+    try:
+        model_summary_str = str(torchinfo.summary(model, input_size=(1, in_channels, seq_len), device="cpu", verbose=0))
+    except Exception as e:
+        model_summary_str = f"Error generating model summary: {e}"
+    
     
     checkpoint_path = "/Users/aakashrajput/MachineLearning/Exoplanets/src/original1dcnn/checkpoints/model_best.pth"
     if os.path.exists(checkpoint_path):
@@ -52,7 +59,7 @@ def evaluate():
     else:
         print("No checkpoint found. Evaluating random model.")
 
-    eval_size = min(1000, len(val_dataset))
+    eval_size = min(5000, len(val_dataset))
     eval_subset, _ = random_split(
         val_dataset, [eval_size, len(val_dataset) - eval_size], generator=torch.Generator().manual_seed(42)
     )
@@ -112,6 +119,7 @@ INDIVIDUAL SPECIES PERFORMANCE:
 
     # Save to src/original1dcnn/details.txt
     details_path_1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "details.txt")
+    report_content += f"\n\nMODEL ARCHITECTURE SUMMARY:\n{'-'*80}\n{model_summary_str}\n{'-'*80}\n"
     with open(details_path_1, "w") as f:
         f.write(report_content)
     print(f"=> Saved details log to {details_path_1}")

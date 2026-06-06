@@ -2,7 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
 import math
@@ -18,44 +18,32 @@ except ImportError:
             if total and (i + 1) % max(1, total // 10) == 0:
                 print(f"{desc} Progress: {i+1}/{total} ({(i+1)/total*100:.0f}%)")
 
-try:
-    from dataloader import load_cached_data
-except ImportError:
-    from src.10_mil_minus_params.transformer.dataloader import load_cached_data
-
-try:
-    from model import NasaInaraTransformer
-except ImportError:
-    from src.10_mil_minus_params.transformer.model import NasaInaraTransformer
+from dataloader import load_cached_data_with_envs
+from model import NasaInaraTransformer
 
 BATCH_SIZE = 16
-LEARNING_RATE = 0.001       # Higher peak LR (warmup makes this safe)
-EPOCHS = 50                 # Transformers need more epochs to converge
-PATIENCE_ES = 15            # More patience for transformer convergence
-WARMUP_EPOCHS = 5           # Linear warmup before cosine decay
-NORMALIZE_INPUTS = True
+LEARNING_RATE = 0.001
+EPOCHS = 50
+PATIENCE_ES = 15
+WARMUP_EPOCHS = 5
 
 SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
 CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/charts"
+CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/checkpoints"
+CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/charts"
+LOG_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/runs/causal_experiment"
 
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/checkpoints"
-LOG_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/runs/inara_experiment"
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(CHARTS_DIR, exist_ok=True)
 
 def get_cosine_warmup_scheduler(optimizer, warmup_epochs, total_epochs, steps_per_epoch):
-    """Linear warmup for warmup_epochs, then cosine decay to 0."""
     warmup_steps = warmup_epochs * steps_per_epoch
     total_steps = total_epochs * steps_per_epoch
     
     def lr_lambda(current_step):
         if current_step < warmup_steps:
-            # Linear warmup: 0 → 1
             return float(current_step) / float(max(1, warmup_steps))
         else:
-            # Cosine decay: 1 → 0
             progress = float(current_step - warmup_steps) / float(max(1, total_steps - warmup_steps))
             return max(0.0, 0.5 * (1.0 + math.cos(math.pi * progress)))
     
@@ -96,26 +84,36 @@ def train():
     )
     print(f"Using device: {device}")
 
-    print("Loading cached dataset...")
-    train_dataset, val_dataset = load_cached_data(
-        CACHE_DIR, SUMMARY_PATH, SPECTRA_DIR, 
-        normalize_inputs=NORMALIZE_INPUTS,
-        feature_mode="planet"
-    )
+    # 1. Load counterfactually augmented training data
+    aug_x_path = os.path.join(CHECKPOINT_DIR, "train_x_augmented.pt")
+    aug_y_path = os.path.join(CHECKPOINT_DIR, "train_y_augmented.pt")
     
-    in_channels = train_dataset[0][0].shape[0]
-    seq_len = train_dataset[0][0].shape[1]
+    if not (os.path.exists(aug_x_path) and os.path.exists(aug_y_path)):
+        raise FileNotFoundError("Augmented train datasets not found! Run generate_counterfactuals.py first.")
+        
+    print("Loading augmented training dataset...")
+    train_x = torch.load(aug_x_path)
+    train_y = torch.load(aug_y_path)
+    train_dataset = TensorDataset(train_x, train_y)
+    
+    # 2. Load validation dataset
+    _, val_dataset, _ = load_cached_data_with_envs(CACHE_DIR, SUMMARY_PATH)
+    val_x = val_dataset.tensors[0]
+    val_y = val_dataset.tensors[1]
+    val_dataset = TensorDataset(val_x, val_y)
+    
+    in_channels = train_x.shape[1]
+    seq_len = train_x.shape[2]
     print(f"Detected channels: {in_channels}, sequence length: {seq_len}")
+    
     model = NasaInaraTransformer(in_channels=in_channels, sequence_length=seq_len).to(device)
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, pin_memory=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, pin_memory=True)
-    print(f"Loaded {len(train_dataset)} training and {len(val_dataset)} validation samples.")
+    print(f"Loaded {len(train_dataset)} training (augmented) and {len(val_dataset)} validation samples.")
 
-    # MSE loss — smoother gradients than L1, better for transformer optimization
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
-    # Cosine annealing with linear warmup
     scheduler = get_cosine_warmup_scheduler(
         optimizer, 
         warmup_epochs=WARMUP_EPOCHS, 
@@ -143,14 +141,10 @@ def train():
              epochs_no_improve) = load_checkpoint(resume_file, model, optimizer, scheduler)
             print(f"=> Resumed training from epoch {start_epoch}")
         except Exception as e:
-            print(f"=> Could not load checkpoint from {resume_file}: {e}. Starting from scratch.")
-
-    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"Total Trainable Parameters: {total_params:,}")
+            print(f"=> Could not load checkpoint: {e}. Starting from scratch.")
 
     for epoch in range(start_epoch, EPOCHS):
-        # --- TRAINING ---
-        model.train()  # Activates Dropout
+        model.train()
         train_loss = 0.0
         print(f"\n--- Epoch {epoch+1}/{EPOCHS} ---")
         
@@ -163,11 +157,10 @@ def train():
             loss = criterion(predictions, targets)
             loss.backward()
             
-            # Gradient clipping — prevents explosion through attention layers
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             
             optimizer.step()
-            scheduler.step()  # Step per batch for warmup scheduler
+            scheduler.step()
 
             train_loss += loss.item()
 
@@ -179,12 +172,12 @@ def train():
         writer.add_scalar('LR', current_lr, epoch)
         print(f"Train Loss (MSE): {avg_train_loss:.6f} | LR: {current_lr:.6f}")
 
-        # --- VALIDATION ---
-        model.eval()  # Deactivates Dropout for stable validation metrics
+        # Validation
+        model.eval()
         val_loss = 0.0
 
         with torch.no_grad():
-            for spectra, targets in tqdm(val_loader, desc=f"Epoch {epoch+1} [Val]"):
+            for spectra, targets in val_loader:
                 spectra, targets = spectra.to(device), targets.to(device)
                 predictions = model(spectra)
                 loss = criterion(predictions, targets)
@@ -195,7 +188,6 @@ def train():
         writer.add_scalar('Loss/Validation (MSE)', avg_val_loss, epoch)
         print(f"Val Loss (MSE): {avg_val_loss:.6f}")
 
-        # --- EARLY STOPPING & CHECKPOINTING ---
         is_best = avg_val_loss < best_val_loss
         if is_best:
             best_val_loss = avg_val_loss
@@ -219,31 +211,25 @@ def train():
             print(f"\nEarly stopping triggered! No improvement for {PATIENCE_ES} epochs.")
             break
 
-    # Save the loss curve plot at the end of training
     if len(train_loss_history) > 0:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-        
-        # Loss curve
-        ax1.plot(range(1, len(train_loss_history)+1), train_loss_history, label="Train Loss (MSE)", marker="o")
-        ax1.plot(range(1, len(val_loss_history)+1), val_loss_history, label="Val Loss (MSE)", marker="o")
+        ax1.plot(range(1, len(train_loss_history)+1), train_loss_history, label="Train Loss", marker="o")
+        ax1.plot(range(1, len(val_loss_history)+1), val_loss_history, label="Val Loss", marker="o")
         ax1.set_xlabel("Epoch")
         ax1.set_ylabel("Loss (MSE)")
-        ax1.set_title("Training and Validation Loss Curve")
         ax1.legend()
         ax1.grid(True)
         
-        # LR schedule
         ax2.plot(range(1, len(lr_history)+1), lr_history, label="Learning Rate", color="green", marker="o")
         ax2.set_xlabel("Epoch")
         ax2.set_ylabel("Learning Rate")
-        ax2.set_title("Learning Rate Schedule (Warmup + Cosine)")
         ax2.legend()
         ax2.grid(True)
         
         plt.tight_layout()
         plt.savefig(os.path.join(CHARTS_DIR, "loss_curve.png"), dpi=150)
         plt.close()
-        print(f"=> Saved loss curve plot to {os.path.join(CHARTS_DIR, 'loss_curve.png')}")
+        print("Saved loss curves.")
 
     writer.close()
     print("Training Complete.")
