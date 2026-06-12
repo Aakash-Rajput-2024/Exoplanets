@@ -37,3 +37,16 @@ venvEXO/
 /src/causal/cnn_trnas/runs/
 /src/causal/cnn_trnas/environment_probe/
 
+# Claude Code and local config
+.claude/
+
+# Research/scratch directories
+feynmanresearch/
+
+# Environment and IDE files
+.env
+.env.local
+.vscode/
+.idea/
+*.log
+
