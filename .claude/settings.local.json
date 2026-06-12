@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(python -m py_compile model.py train_dscm.py generate_counterfactuals.py dataloader.py)",
-      "Bash(python smoke_test.py)"
-    ]
-  }
-}

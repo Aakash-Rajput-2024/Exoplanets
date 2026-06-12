@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/test.py", line 1, in <module>
-    import torchinfo
-ModuleNotFoundError: No module named 'torchinfo'

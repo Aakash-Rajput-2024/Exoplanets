@@ -1,7 +1,0 @@
-Inputs standardized channel-wise using training stats
-Targets standardized column-wise using training stats
-Detected channels: 1, sequence length: 4379
-Dynamically determined downsampled sequence length: 547
-Loaded model from checkpoint.
-=> Saved details log to /Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/details.txt
-All evaluation plots generated successfully in charts directory.
