@@ -1,0 +1,32 @@
+==============================================================================
+REAL EARTH-AS-EXOPLANET TEST — transformerarch
+Spectrum: Robinson et al. 2011 VPL 3-D Earth model (quadrature, real clouds)
+==============================================================================
+Num epochs (best checkpoint):  original=14   cloud-robust=20
+Single target (Earth) -> qualitative read, no R^2.
+
+Predicted abundance (mole fraction) vs Earth's approx VMR:
+  species  |  Earth VMR |   original | cloud-robust
+------------------------------------------------------------
+  H2O      |   1.00e-02 |     0.0259 |       0.0535
+  CO2      |   4.20e-04 |     0.0659 |       0.0733
+  O2       |   2.09e-01 |     0.7153 |       0.5665
+  N2       |   7.81e-01 |     0.1813 |       0.2965
+  CH4      |   1.90e-06 |     0.0056 |       0.0017
+  N2O      |   3.30e-07 |     0.0012 |       0.0059
+  CO       |   1.00e-07 |     0.0045 |       0.0045
+  O3       |   7.00e-07 |     0.0001 |      -0.0001
+  SO2      |   1.00e-10 |     0.0000 |       0.0023
+  NH3      |   1.00e-09 |     0.0012 |       0.0002
+  C2H6     |   1.00e-09 |     0.0000 |      -0.0000
+  NO2      |   1.00e-11 |     0.0000 |       0.0000
+------------------------------------------------------------
+
+Major-gas check (the legible part; trace gases are out of INARA's range):
+  N2   Earth= 0.781  orig= 0.1813 (|err| 0.600)  robust= 0.2965 (|err| 0.484)  -> closer: robust
+  O2   Earth= 0.209  orig= 0.7153 (|err| 0.506)  robust= 0.5665 (|err| 0.357)  -> closer: robust
+  H2O  Earth= 0.010  orig= 0.0259 (|err| 0.016)  robust= 0.0535 (|err| 0.044)  -> closer: original
+  CO2  Earth= 0.000  orig= 0.0659 (|err| 0.065)  robust= 0.0733 (|err| 0.073)  -> closer: original
+
+CAVEATS: (1) units/observable adapted from W/m^2/um/sr reflected intensity, magnitude-matched to INARA before standardizing. (2) INARA labels sample thick exotic atmospheres, so Earth's ppm/ppb trace gases are OUT of distribution; both models will over-predict them. (3) One planet, so this is indicative, not statistical.
+==============================================================================

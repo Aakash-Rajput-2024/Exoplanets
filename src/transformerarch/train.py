@@ -1,4 +1,5 @@
 import os
+import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -18,15 +19,14 @@ except ImportError:
             if total and (i + 1) % max(1, total // 10) == 0:
                 print(f"{desc} Progress: {i+1}/{total} ({(i+1)/total*100:.0f}%)")
 
-try:
-    from dataloader import load_cached_data
-except ImportError:
-    from src.10_mil_minus_params.transformer.dataloader import load_cached_data
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.abspath(os.path.join(THIS_DIR, os.pardir, os.pardir))
+sys.path.insert(0, THIS_DIR)                        # local dataloader.py / model.py
+sys.path.insert(0, os.path.join(REPO_ROOT, "src"))  # shared 'common' package
 
-try:
-    from model import NasaInaraTransformer
-except ImportError:
-    from src.10_mil_minus_params.transformer.model import NasaInaraTransformer
+from dataloader import load_cached_data
+from model import NasaInaraTransformer
+from common.provenance import stamp_checkpoint
 
 BATCH_SIZE = 16
 LEARNING_RATE = 0.001       # Higher peak LR (warmup makes this safe)
@@ -35,15 +35,29 @@ PATIENCE_ES = 15            # More patience for transformer convergence
 WARMUP_EPOCHS = 5           # Linear warmup before cosine decay
 NORMALIZE_INPUTS = True
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/charts"
-
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/checkpoints"
-LOG_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/runs/inara_experiment"
+# All paths derived from this file's location so the training script and its
+# evaluator (test.py) agree on where checkpoints live by construction (fixes C6:
+# the previous CHECKPOINT_DIR pointed into a deleted src/10_mil_minus_params/ tree).
+SUMMARY_PATH = os.path.join(REPO_ROOT, "data", "summary.csv")
+SPECTRA_DIR = os.path.join(REPO_ROOT, "data", "inara_1by3")
+CACHE_DIR = os.path.join(REPO_ROOT, "data", "cache_planet")
+CHARTS_DIR = os.path.join(THIS_DIR, "charts")
+CHECKPOINT_DIR = os.path.join(THIS_DIR, "checkpoints")
+LOG_DIR = os.path.join(THIS_DIR, "runs", "inara_experiment")
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(CHARTS_DIR, exist_ok=True)
+
+# Hyperparameter fingerprint embedded in every checkpoint for traceable
+# provenance (fixes C6). Runtime shape (in/out channels, seq_len) is added in
+# train() once the data is loaded.
+CONFIG = dict(
+    track="transformerarch", model="NasaInaraTransformer",
+    batch_size=BATCH_SIZE, learning_rate=LEARNING_RATE, epochs=EPOCHS,
+    patience_es=PATIENCE_ES, warmup_epochs=WARMUP_EPOCHS,
+    normalize_inputs=NORMALIZE_INPUTS, loss="mse", optimizer="adam",
+    scheduler="cosine_warmup", grad_clip=1.0, feature_mode="planet",
+    cache="cache_planet",
+)
 
 def get_cosine_warmup_scheduler(optimizer, warmup_epochs, total_epochs, steps_per_epoch):
     """Linear warmup for warmup_epochs, then cosine decay to 0."""
@@ -203,7 +217,7 @@ def train():
         else:
             epochs_no_improve += 1
 
-        save_checkpoint({
+        state = stamp_checkpoint({
             'epoch': epoch + 1,
             'state_dict': model.state_dict(),
             'optimizer': optimizer.state_dict(),
@@ -213,7 +227,8 @@ def train():
             'val_loss_history': val_loss_history,
             'lr_history': lr_history,
             'epochs_no_improve': epochs_no_improve,
-        }, is_best)
+        }, {**CONFIG, "in_channels": in_channels, "seq_len": seq_len}, repo_dir=REPO_ROOT)
+        save_checkpoint(state, is_best)
 
         if epochs_no_improve >= PATIENCE_ES:
             print(f"\nEarly stopping triggered! No improvement for {PATIENCE_ES} epochs.")

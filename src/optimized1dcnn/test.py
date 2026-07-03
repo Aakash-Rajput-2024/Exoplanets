@@ -28,7 +28,8 @@ TARGET_COLUMNS = [
 def calculate_metrics(y_true, y_pred):
     ss_res = np.sum((y_true - y_pred) ** 2, axis=0)
     ss_tot = np.sum((y_true - np.mean(y_true, axis=0)) ** 2, axis=0)
-    r2 = 1 - (ss_res / (ss_tot + 1e-8))
+    with np.errstate(invalid="ignore", divide="ignore"):  # C2: R2 undefined when ss_tot==0; no epsilon bias
+        r2 = np.where(ss_tot > 0, 1 - ss_res / ss_tot, np.nan)
     rmse = np.sqrt(np.mean((y_true - y_pred) ** 2, axis=0))
     return r2, rmse
 

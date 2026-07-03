@@ -26,8 +26,19 @@ __pycache__/
 # Virtual environments
 venv/
 .venv/
+.venv_prt/
 env/
 venvEXO/
+
+# Third-party repo cloned in-tree (5 GB, has its own git history — obtain separately)
+/MultiREx-public/
+
+# Vim swap files
+*.swp
+.*.swp
+
+# Large reference PDFs
+/Multi_rex.pdf
 
 # MacOS system files
 .DS_Store
@@ -42,6 +53,7 @@ venvEXO/
 
 # Research/scratch directories
 feynmanresearch/
+notes/
 
 # Environment and IDE files
 .env

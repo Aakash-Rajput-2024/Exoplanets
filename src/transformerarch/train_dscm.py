@@ -26,15 +26,15 @@ EPOCHS = 15
 BETA = 1e-4  # KL scaling factor
 LATENT_DIM = 64
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/checkpoints"
-# Let's also support the current src/transformerarch/checkpoints path
-CHECKPOINT_DIR_ALT = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/checkpoints"
-
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.abspath(os.path.join(THIS_DIR, os.pardir, os.pardir))
+SUMMARY_PATH = os.path.join(REPO_ROOT, "data", "summary.csv")
+SPECTRA_DIR = os.path.join(REPO_ROOT, "data", "inara_1by3")
+CACHE_DIR = os.path.join(REPO_ROOT, "data", "cache_planet")
+# Single, __file__-derived checkpoint dir (fixes C6: previously wrote to a
+# deleted src/10_mil_minus_params/ tree and duplicated into a second path).
+CHECKPOINT_DIR = os.path.join(THIS_DIR, "checkpoints")
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
-os.makedirs(CHECKPOINT_DIR_ALT, exist_ok=True)
 
 def load_data_and_envs():
     print("Loading cached spectra and atmosphere targets...")
@@ -112,7 +112,6 @@ def load_data_and_envs():
         "cont_cols": cont_cols
     }
     torch.save(env_stats, os.path.join(CHECKPOINT_DIR, "dscm_env_stats.pt"))
-    torch.save(env_stats, os.path.join(CHECKPOINT_DIR_ALT, "dscm_env_stats.pt"))
     print("Environment normalization stats cached successfully.")
     
     return (TensorDataset(train_x_std, train_y_std, train_env_tensor), 
@@ -201,7 +200,6 @@ def main():
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
             torch.save(model.state_dict(), os.path.join(CHECKPOINT_DIR, "dscm_best.pth"))
-            torch.save(model.state_dict(), os.path.join(CHECKPOINT_DIR_ALT, "dscm_best.pth"))
             print("=> Saved new best DSCM model checkpoint.")
             
     print("DSCM training complete!")
