@@ -48,8 +48,15 @@ venvEXO/
 /src/causal/cnn_trnas/runs/
 /src/causal/cnn_trnas/environment_probe/
 
-# Claude Code and local config
+# Claude Code and local config (any Claude-related file/dir, any depth)
 .claude/
+.claude*
+CLAUDE.md
+claude_desktop_config.json
+
+# All markdown files (does not retroactively untrack already-committed .md
+# files — see note; new/untracked .md files will no longer be picked up)
+*.md
 
 # Research/scratch directories
 feynmanresearch/

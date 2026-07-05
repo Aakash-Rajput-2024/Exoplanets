@@ -39,6 +39,19 @@ _FEATURE_CHANNELS = {
     "both": [0, 1],
 }
 
+# Drop the 2.0 µm boundary bin (last λ index). Its noise≈0 makes the contrast
+# there ~noise-free — a one-bin leak — and pins the stellar SNR at the clamp
+# ceiling. Measured: bin 4378 is the only λ with noise==0 for >50% of planets.
+# Applied at LOAD time so every consumer (train/eval/cloud) sees the same grid
+# without rebuilding the 94 GB→cache.
+TRIM_TAIL_BINS = 1
+
+# Bump to invalidate on-disk DERIVED stats (norm, continuum, scalar/label stats)
+# whenever the raw load changes shape/semantics (e.g. the tail trim above). Old
+# files carry a different tag, so a stale full-length stat can never be silently
+# reused; the missing tagged file simply regenerates.
+DERIVED_CACHE_VERSION = "v2trim1"
+
 
 def feature_channels(feature_mode):
     if feature_mode not in _FEATURE_CHANNELS:
@@ -46,11 +59,22 @@ def feature_channels(feature_mode):
     return _FEATURE_CHANNELS[feature_mode]
 
 
+def _trim(t):
+    """Drop the last TRIM_TAIL_BINS wavelength bins along the last axis."""
+    return t[..., :-TRIM_TAIL_BINS] if TRIM_TAIL_BINS else t
+
+
+def load_wavelength(cache_dir):
+    """Shared λ grid (µm), tail-trimmed to match load_raw."""
+    return _trim(torch.load(os.path.join(cache_dir, "wavelength.pt")))
+
+
 def load_raw(cache_dir, split, feature_mode="planet"):
     """Return (x[N,C,L], y[N,12], noise[N,L], ids) — RAW, no transform.
 
     C1 (noise injection) and the causal track (env conditioning via ids/meta)
-    build on this; the standardized path below wraps it.
+    build on this; the standardized path below wraps it. The tail boundary bin is
+    trimmed (TRIM_TAIL_BINS) so L here is one shorter than the on-disk cache.
     """
     ch = feature_channels(feature_mode)
     x = torch.load(os.path.join(cache_dir, f"{split}_x.pt"))[:, ch, :].contiguous()
@@ -58,7 +82,7 @@ def load_raw(cache_dir, split, feature_mode="planet"):
     noise = torch.load(os.path.join(cache_dir, f"{split}_noise.pt"))
     with open(os.path.join(cache_dir, f"{split}_ids.json")) as f:
         ids = json.load(f)
-    return x.float(), y.float(), noise.float(), ids
+    return _trim(x.float()).contiguous(), y.float(), _trim(noise.float()).contiguous(), ids
 
 
 def load_meta(cache_dir, split):
@@ -69,7 +93,7 @@ def load_meta(cache_dir, split):
 def _scalar_stats(cache_dir, feature_mode):
     """Scalar per-channel INPUT stats from TRAIN (the current encoding; H3 will
     add a per-λ log alternative). Cached to disk per feature_mode."""
-    path = os.path.join(cache_dir, f"scalar_stats_{feature_mode}.pt")
+    path = os.path.join(cache_dir, f"scalar_stats_{feature_mode}_{DERIVED_CACHE_VERSION}.pt")
     if os.path.exists(path):
         return torch.load(path)
     tr_x, _, _, _ = load_raw(cache_dir, "train", feature_mode)
@@ -87,7 +111,7 @@ def label_pipeline(cache_dir, label_transform="clr"):
     Labels are independent of feature_mode, so this is fit once per transform on
     the train split and reused for val/test and at eval time (for decode).
     """
-    path = os.path.join(cache_dir, f"label_pipe_{label_transform}.pt")
+    path = os.path.join(cache_dir, f"label_pipe_{label_transform}_{DERIVED_CACHE_VERSION}.pt")
     if os.path.exists(path):
         return LabelPipeline.from_state(torch.load(path))
     _, tr_y, _, _ = load_raw(cache_dir, "train", "planet")

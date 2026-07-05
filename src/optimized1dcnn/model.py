@@ -1,10 +1,25 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 try:
     from torchsummary import summary
 except ImportError:
     summary = None
+
+
+def _mps_safe_adaptive_avg_pool1d(x, output_size):
+    """AdaptiveAvgPool1d that also works on Apple MPS.
+
+    MPS has no kernel for adaptive pooling when the input length is not divisible
+    by the output size (pytorch#96056) — it raises instead of falling back. Here
+    the post-conv length is 4379→547 (prime) and output_size=16, so on MPS we run
+    just this one op on CPU. The result is numerically identical to the CPU/CUDA
+    path; only this pooling call takes the detour, and only on MPS.
+    """
+    if x.device.type == "mps" and x.shape[-1] % output_size != 0:
+        return F.adaptive_avg_pool1d(x.cpu(), output_size).to(x.device)
+    return F.adaptive_avg_pool1d(x, output_size)
 
 class NasaInaraModel(nn.Module):
     def __init__(self, in_channels=1, sequence_length=4379):
@@ -54,9 +69,9 @@ class NasaInaraModel(nn.Module):
         x = self.pool2(self.relu(self.bn2(self.conv2(x))))
         x = self.pool3(self.relu(self.bn3(self.conv3(x))))
         x = self.relu(self.bn4(self.conv4(x)))
-        x = self.adaptive_pool(x)
+        x = _mps_safe_adaptive_avg_pool1d(x, 16)
         x = self.flatten(x)
-        
+
         x = self.relu(self.fc1(x))
         x = self.dropout(x)
         out = self.fc2(x)

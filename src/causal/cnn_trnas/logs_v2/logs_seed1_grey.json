@@ -1,0 +1,106 @@
+{
+  "track": "causal",
+  "seed": 1,
+  "config": {
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "alpha": 1.0,
+    "loss": "huber",
+    "epochs": 10,
+    "batch_size": 64,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "warmup_epochs": 5,
+    "grad_clip": 1.0,
+    "patience": 15,
+    "model_py": "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/model.py",
+    "model_cls": "NasaInaraTransformer",
+    "desc": "Transformer backbone; DSCM counterfactual augmentation (base only here)",
+    "track": "causal",
+    "cloud_train": "grey"
+  },
+  "best_val_loss": 0.2256670326339027,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.36463828106289325,
+      "val_loss": 0.35399188747295757,
+      "val_r2_log10": -0.0007039805059321225,
+      "lr": 0.0002,
+      "sec": 955.0085060596466
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.3376888639253119,
+      "val_loss": 0.3400990987099664,
+      "val_r2_log10": 0.03908071294426918,
+      "lr": 0.0004,
+      "sec": 986.7754056453705
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3223009521978489,
+      "val_loss": 0.32480286948942727,
+      "val_r2_log10": 0.12138482183218002,
+      "lr": 0.0006,
+      "sec": 992.2997200489044
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.30860874723049175,
+      "val_loss": 0.3066170634217345,
+      "val_r2_log10": 0.14204753935337067,
+      "lr": 0.0008,
+      "sec": 991.269122838974
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.2931588094303573,
+      "val_loss": 0.2898328862438312,
+      "val_r2_log10": 0.20090849697589874,
+      "lr": 0.001,
+      "sec": 983.7624509334564
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.2791374829368315,
+      "val_loss": 0.2682048610352367,
+      "val_r2_log10": 0.2585783898830414,
+      "lr": 0.0009045084971874737,
+      "sec": 981.7962863445282
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.2651439859815266,
+      "val_loss": 0.2562098227484378,
+      "val_r2_log10": 0.2924996614456177,
+      "lr": 0.0006545084971874737,
+      "sec": 985.8568360805511
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.25234333070507947,
+      "val_loss": 0.24232993029445582,
+      "val_r2_log10": 0.34644997119903564,
+      "lr": 0.00034549150281252633,
+      "sec": 988.0731341838837
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.2402822904288769,
+      "val_loss": 0.22892216313092006,
+      "val_r2_log10": 0.36881840229034424,
+      "lr": 9.549150281252633e-05,
+      "sec": 979.9590320587158
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.232153615096341,
+      "val_loss": 0.2256670326339027,
+      "val_r2_log10": 0.3783237040042877,
+      "lr": 0.0,
+      "sec": 987.6904158592224
+    }
+  ]
+}

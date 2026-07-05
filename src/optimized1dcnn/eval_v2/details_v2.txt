@@ -1,0 +1,44 @@
+================================================================================
+EXOPLANET ATMOSPHERIC RETRIEVAL — TEST-SET EVALUATION (ULTRAPLAN v2)
+================================================================================
+Track:            optimized1dcnn  (CNN + BatchNorm + progressive kernels + AdaptiveAvgPool)
+Split:            FROZEN TEST (never used for model selection) — C3
+Observable:       contrast_snr   Input norm: per_lambda_asinh   Labels: clr (C1/H3/C2)
+Seeds:            [0]  (n=1)
+Ran:              50/50 epochs  | best@50  | git 741b2672c15b  | cfg f0a83e242cb2
+  ⚠ PRELIMINARY: n=1 seed(s) (need ≥3 for CIs) — not a citable result
+Reporting space:  log10 mixing ratio (dex); R² NaN where target var=0 (honest, C2)
+--------------------------------------------------------------------------------
+Overall test R² (log10), per-seed mean:  0.0738 (n=1; no std)
+Overall test R² (log10), seed-ensemble:      0.0738
+Overall RMSE (dex):  0.4417    Overall MAE (dex): 0.3012
+--------------------------------------------------------------------------------
+PER-SPECIES (seed-ensemble, 95% bootstrap CI on R²):
+Species  | R2(log10) | 95% CI              | RMSE(dex) | MAE(dex) 
+--------------------------------------------------------------------------------
+H2O      | 0.0974    | [0.081, 0.116]      | 0.4293    | 0.2930   
+CO2      | 0.0902    | [0.073, 0.108]      | 0.3501    | 0.2244   
+O2       | 0.1160    | [0.096, 0.136]      | 0.3638    | 0.2297   
+N2       | -0.0629   | [-0.072, -0.054]    | 0.3915    | 0.2474   
+CH4      | 0.1389    | [0.120, 0.156]      | 0.4135    | 0.2856   
+N2O      | 0.0552    | [0.043, 0.068]      | 0.4316    | 0.2942   
+CO       | -0.0583   | [-0.067, -0.050]    | 0.4737    | 0.3253   
+O3       | 0.2998    | [0.281, 0.318]      | 0.4902    | 0.3483   
+SO2      | -0.0487   | [-0.057, -0.041]    | 0.4698    | 0.3249   
+NH3      | 0.2429    | [0.222, 0.264]      | 0.4060    | 0.2756   
+C2H6     | 0.0636    | [0.051, 0.076]      | 0.6082    | 0.4421   
+NO2      | -0.0486   | [-0.058, -0.039]    | 0.4721    | 0.3243   
+--------------------------------------------------------------------------------
+SNR SWEEP — C1 headline figure. α = √(t_exp/t_nominal); α=1 is the validated
+LUVOIR-like nominal program (8 hr @ 5 pc, ∝d²; Zorzan+25 §3.1) — a photon-
+starved floor (band planet SNR < 1 ⇒ R²≈0 expected BY PHYSICS, not a bug).
+alpha   | exposure × | SNR_star(med) | SNR_planet(band) | R2(log10) mean±std    
+--------------------------------------------------------------------------------
+0.3     | 0.1        | 0.222         | 0.898            | -0.0250 ± 0.0000
+1.0     | 1.0        | 0.740         | 2.995            | 0.0738 ± 0.0000
+3.0     | 9.0        | 2.220         | 8.985            | 0.2102 ± 0.0000
+10.0    | 100.0      | 7.401         | 29.950           | 0.3390 ± 0.0000
+30.0    | 900.0      | 22.203        | 89.849           | 0.4390 ± 0.0000
+100.0   | 10000.0    | 74.011        | 299.498          | 0.5151 ± 0.0000
+300.0   | 90000.0    | 222.034       | 898.493          | 0.5472 ± 0.0000
+================================================================================
