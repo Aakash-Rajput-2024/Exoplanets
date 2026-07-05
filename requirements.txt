@@ -1,0 +1,19 @@
+# Core dependencies for the run.sh pipeline (common/build_cache, train_runner,
+# evaluate, leakage_probe, eval_cloud_transfer, summarize).
+# Install with: pip install -r requirements.txt
+# Validated with Python 3.11, torch 2.9-2.10 (MPS backend on Apple Silicon works
+# out of the box with the default PyPI wheel on macOS; no special index needed).
+numpy>=2.0
+pandas>=2.0
+scipy>=1.10
+torch>=2.2
+matplotlib>=3.8
+tqdm>=4.65
+
+# NOT required for the core pipeline above. Only needed if you also run:
+#   - src/crossgen_eval/ (cross-generator eval): additionally needs astropy,
+#     scikit-learn, seaborn, and the MultiREx / petitRADTRANS / TauREx
+#     third-party packages, which are cloned/installed separately (see
+#     src/crossgen_eval/README.md) — they are not part of this repo.
+#   - the legacy per-track train.py/test.py/dataloader.py scripts (superseded
+#     by common/train_runner.py + common/evaluate.py; see registry.py).
