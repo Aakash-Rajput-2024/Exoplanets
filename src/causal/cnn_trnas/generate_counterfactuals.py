@@ -4,9 +4,9 @@ from torch.utils.data import DataLoader, TensorDataset
 from dataloader import load_cached_data_with_envs
 from model import DSCM
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/checkpoints"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
+CHECKPOINT_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/causal/cnn_trnas/checkpoints"
 LATENT_DIM = 64
 MAHALANOBIS_THRESHOLD = 3.0  # drop counterfactuals whose (A, E') pair is implausible
 

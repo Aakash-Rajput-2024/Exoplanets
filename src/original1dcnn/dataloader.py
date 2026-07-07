@@ -148,8 +148,8 @@ def load_cached_data(save_dir, sum_path=None, dir_path=None, normalize_inputs=Tr
     return TensorDataset(train_x, train_y), TensorDataset(val_x, val_y)
 
 if __name__ == "__main__":
-    SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-    SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-    CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_original"
+    SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+    SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+    CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_original"
     
     cache_data(SUMMARY_PATH, SPECTRA_DIR, CACHE_DIR, feature_mode="planet")

@@ -16,10 +16,10 @@ try:
 except ImportError:
     from src.transformerarch.model import NasaInaraTransformer
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/charts"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
+CHARTS_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/transformerarch/charts"
 os.makedirs(CHARTS_DIR, exist_ok=True)
 
 NORMALIZE_INPUTS = True
@@ -60,7 +60,7 @@ def evaluate():
         model_summary_str = f"Error generating model summary: {e}"
     
     
-    checkpoint_path = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/checkpoints/model_best.pth"
+    checkpoint_path = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/transformerarch/checkpoints/model_best.pth"
     if os.path.exists(checkpoint_path):
         checkpoint = torch.load(checkpoint_path, map_location=device)
         model.load_state_dict(checkpoint['state_dict'])

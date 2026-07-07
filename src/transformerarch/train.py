@@ -35,13 +35,13 @@ PATIENCE_ES = 15            # More patience for transformer convergence
 WARMUP_EPOCHS = 5           # Linear warmup before cosine decay
 NORMALIZE_INPUTS = True
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/charts"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
+CHARTS_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/10_mil_minus_params/transformer/charts"
 
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/checkpoints"
-LOG_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/runs/inara_experiment"
+CHECKPOINT_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/10_mil_minus_params/transformer/checkpoints"
+LOG_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/10_mil_minus_params/transformer/runs/inara_experiment"
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(CHARTS_DIR, exist_ok=True)
 

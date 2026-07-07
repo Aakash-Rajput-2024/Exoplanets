@@ -26,12 +26,12 @@ EPOCHS = 15
 BETA = 1e-4  # KL scaling factor
 LATENT_DIM = 64
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/10_mil_minus_params/transformer/checkpoints"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
+CHECKPOINT_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/10_mil_minus_params/transformer/checkpoints"
 # Let's also support the current src/transformerarch/checkpoints path
-CHECKPOINT_DIR_ALT = "/Users/aakashrajput/MachineLearning/Exoplanets/src/transformerarch/checkpoints"
+CHECKPOINT_DIR_ALT = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/transformerarch/checkpoints"
 
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(CHECKPOINT_DIR_ALT, exist_ok=True)

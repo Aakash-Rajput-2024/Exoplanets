@@ -58,12 +58,15 @@ def cache_data(sum_path, dir_path, save_dir, feature_mode="both"):
     all_signals = []
     all_labels = []
     
-    print(f"Starting to load {len(dataset)} items into memory...")
+    expected_length = 4379
+    print(f"Starting to load {len(dataset)} items into memory (filtering for sequence length {expected_length})...")
     for idx in range(len(dataset)):
         try:
             signal, label = dataset[idx]
-            all_signals.append(signal)
-            all_labels.append(label)
+            # Only keep signals with the expected shape [channels, expected_length]
+            if signal.shape[1] == expected_length:
+                all_signals.append(signal)
+                all_labels.append(label)
         except Exception as e:
             pass
             
@@ -148,8 +151,8 @@ def load_cached_data(save_dir, sum_path=None, dir_path=None, normalize_inputs=Tr
     return TensorDataset(train_x, train_y), TensorDataset(val_x, val_y)
 
 if __name__ == "__main__":
-    SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-    SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-    CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache"
+    SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+    SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+    CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache"
     
     cache_data(SUMMARY_PATH, SPECTRA_DIR, CACHE_DIR, feature_mode="both")

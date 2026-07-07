@@ -18,9 +18,9 @@ sys.path.insert(0, str(DIR))
 from dataloader import InaraDataset  # noqa: E402
 from model import NasaInaraTransformer  # noqa: E402
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
 CHECKPOINT_PATH = DIR / "checkpoints" / "model_best.pth"
 OUT_DIR = DIR / "environment_probe"
 OUT_DIR.mkdir(parents=True, exist_ok=True)

@@ -12,10 +12,10 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from dataloader import load_cached_data
 from model import NasaInaraModel
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/optimized1dcnn/charts"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache"
+CHARTS_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/optimized1dcnn/charts"
 os.makedirs(CHARTS_DIR, exist_ok=True)
 
 NORMALIZE_INPUTS = True
@@ -51,7 +51,7 @@ def evaluate():
         model_summary_str = f"Error generating model summary: {e}"
     
     
-    checkpoint_path = "/Users/aakashrajput/MachineLearning/Exoplanets/src/optimized1dcnn/checkpoints/model_best.pth"
+    checkpoint_path = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/optimized1dcnn/checkpoints/model_best.pth"
     if os.path.exists(checkpoint_path):
         checkpoint = torch.load(checkpoint_path, map_location=device)
         model.load_state_dict(checkpoint['state_dict'])

@@ -9,10 +9,10 @@ from torch.utils.data import DataLoader, random_split
 from dataloader import load_cached_data_with_envs
 from model import NasaInaraTransformer
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/charts"
-CHECKPOINT_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/checkpoints/model_best.pth"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
+CHARTS_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/causal/cnn_trnas/charts"
+CHECKPOINT_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/causal/cnn_trnas/checkpoints/model_best.pth"
 
 os.makedirs(CHARTS_DIR, exist_ok=True)
 

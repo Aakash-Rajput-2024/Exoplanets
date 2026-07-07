@@ -29,9 +29,9 @@ LAMBDA_IND = 1.0        # weight on HSIC(Z, E) independence penalty
 GRAD_CLIP_MAX = 1.0
 LATENT_DIM = 64
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/causal/cnn_trnas/checkpoints"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
+CHECKPOINT_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/causal/cnn_trnas/checkpoints"
 
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 

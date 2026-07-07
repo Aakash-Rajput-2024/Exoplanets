@@ -29,13 +29,13 @@ EPOCHS = 4
 PATIENCE_ES = 10
 NORMALIZE_INPUTS = True
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-SPECTRA_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/inara_1by3"
-CACHE_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache"
-CHARTS_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/optimized1dcnn/charts"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+SPECTRA_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/inara_1by3"
+CACHE_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache"
+CHARTS_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/optimized1dcnn/charts"
 
-CHECKPOINT_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/optimized1dcnn/checkpoints"
-LOG_DIR = "/Users/aakashrajput/MachineLearning/Exoplanets/src/optimized1dcnn/runs/inara_experiment"
+CHECKPOINT_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/optimized1dcnn/checkpoints"
+LOG_DIR = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/src/optimized1dcnn/runs/inara_experiment"
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(CHARTS_DIR, exist_ok=True)
 

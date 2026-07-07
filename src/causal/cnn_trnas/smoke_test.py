@@ -9,8 +9,8 @@ import torch.optim as optim
 import numpy as np
 from torch.utils.data import DataLoader, TensorDataset, Subset
 
-SUMMARY_PATH = "/Users/aakashrajput/MachineLearning/Exoplanets/data/summary.csv"
-CACHE_DIR    = "/Users/aakashrajput/MachineLearning/Exoplanets/data/cache_planet"
+SUMMARY_PATH = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/summary.csv"
+CACHE_DIR    = "d:/Exoplanets/Neural Posterior Estimation/Exoplanets/data/cache_planet"
 
 N_TRAIN      = 500
 N_VAL        = 200
