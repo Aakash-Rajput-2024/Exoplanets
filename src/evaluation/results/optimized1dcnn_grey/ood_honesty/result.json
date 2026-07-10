@@ -1,0 +1,147 @@
+{
+  "section": "J",
+  "suite": "ood_honesty",
+  "title": "OOD honesty (\u03b4/v, raw vs debiased R\u00b2)",
+  "track": "optimized1dcnn_grey",
+  "status": "ok",
+  "epistemic": "Decomposes cross-gen R\u00b2 into input shift + bias vs genuine information loss.",
+  "headline": {
+    "prt_verdict": "no transfer (genuine)",
+    "taurex_verdict": "no transfer (genuine)",
+    "psg_verdict": "biased extrapolation (fixable)"
+  },
+  "tables": [
+    {
+      "name": "OOD decomposition (covered species)",
+      "columns": [
+        "engine",
+        "med|\u03b4|",
+        "med v",
+        "frac \u03bb in-family",
+        "R\u00b2_raw",
+        "R\u00b2_debiased",
+        "r\u00b2_pearson",
+        "verdict"
+      ],
+      "rows": [
+        [
+          "prt",
+          1.63,
+          0.16,
+          0.0,
+          -4.584,
+          -3.233,
+          0.001,
+          "no transfer (genuine)"
+        ],
+        [
+          "taurex",
+          0.89,
+          0.0,
+          0.0,
+          -1.529,
+          -0.245,
+          0.0,
+          "no transfer (genuine)"
+        ],
+        [
+          "psg",
+          0.01,
+          0.99,
+          1.0,
+          0.097,
+          0.164,
+          0.334,
+          "biased extrapolation (fixable)"
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "\u03b4,v are computed AFTER the INARA-fit norm, so \u03b4\u22480 / v\u22481 means the generator input sits inside INARA's distribution at that wavelength.",
+    "A raw negative R\u00b2 is never published without its debiased companion (this section)."
+  ],
+  "artifacts": [
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/optimized1dcnn_grey/ood_honesty/ood_delta_prt.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/optimized1dcnn_grey/ood_honesty/ood_delta_taurex.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/optimized1dcnn_grey/ood_honesty/ood_delta_psg.png"
+  ],
+  "provenance": {
+    "epochs_run": 49,
+    "epochs_planned": 50,
+    "best_epoch": 49,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "741b2672c15b569ca5728e540cebe0860d95ac45-dirty",
+    "config_hash": "795975bd7d08"
+  },
+  "data": {
+    "engines": {
+      "prt": {
+        "shift": {
+          "median_abs_delta": 1.6307355165481567,
+          "median_v_ratio": 0.16053035855293274,
+          "frac_lambda_in_family": 0.0
+        },
+        "debiased_r2": {
+          "covered": [
+            "H2O",
+            "CO2",
+            "O2",
+            "CH4",
+            "O3"
+          ],
+          "mean_r2_raw": -4.583538837844408,
+          "mean_r2_debiased": -3.2330604620175856,
+          "mean_r2_pearson": 0.001476438680046479
+        },
+        "verdict": "no transfer (genuine)"
+      },
+      "taurex": {
+        "shift": {
+          "median_abs_delta": 0.8900997638702393,
+          "median_v_ratio": 0.00013153976760804653,
+          "frac_lambda_in_family": 0.0
+        },
+        "debiased_r2": {
+          "covered": [
+            "H2O",
+            "CO2",
+            "O2",
+            "CH4",
+            "O3"
+          ],
+          "mean_r2_raw": -1.5290256100192192,
+          "mean_r2_debiased": -0.24517834714210646,
+          "mean_r2_pearson": 0.00043879783119959504
+        },
+        "verdict": "no transfer (genuine)"
+      },
+      "psg": {
+        "shift": {
+          "median_abs_delta": 0.013066688552498817,
+          "median_v_ratio": 0.9933611154556274,
+          "frac_lambda_in_family": 1.0
+        },
+        "debiased_r2": {
+          "covered": [
+            "H2O",
+            "CO2",
+            "O2",
+            "CH4",
+            "O3"
+          ],
+          "mean_r2_raw": 0.09702725555751046,
+          "mean_r2_debiased": 0.16412226454179954,
+          "mean_r2_pearson": 0.3341170647741117
+        },
+        "verdict": "biased extrapolation (fixable)"
+      }
+    }
+  },
+  "generated_at": "2026-07-09T22:22:14"
+}

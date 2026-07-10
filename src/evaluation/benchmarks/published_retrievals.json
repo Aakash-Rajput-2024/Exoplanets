@@ -1,0 +1,71 @@
+{
+  "_README": "Literature-retrieved atmospheric abundances for benchmark exoplanets, used as PSEUDO-TRUTH (not ground truth) for Section H. Values are order-of-magnitude and MODEL-DEPENDENT (they are themselves posterior estimates from Bayesian retrievals, often with large error bars and degeneracies). 'observable' and 'domain_match' record how far each target is from THIS model's reflected-light/direct-imaging 0.2-2.0um domain: transmission/emission of hot Jupiters is a DIFFERENT observable (domain_match=far) and any agreement/disagreement is not an accuracy measurement; directly-imaged young giants (domain_match=near) are the least out-of-domain. retrieved_log10_vmr are decimal-log volume mixing ratios. params drive the offline forward model that synthesises a spectrum from the real system parameters.",
+  "targets": [
+    {
+      "name": "WASP-39b", "observable": "transmission", "domain_match": "far",
+      "params": {"star_temperature": 5400.0, "star_radius": 0.895,
+                 "planet_radius_km": 90800.0, "planet_mass_earth": 89.0,
+                 "surface_temperature": 1170.0, "surface_pressure_bar": 1.0, "sma": 0.0486,
+                 "distance_parsec": 213.0},
+      "retrieved_log10_vmr": {"H2O": -2.5, "CO2": -4.5, "CO": -2.3, "SO2": -5.7, "CH4": -6.5},
+      "citation": "JWST Transiting Exoplanet ERS Team 2023; Rustamkulov et al. 2023; Tsai et al. 2023 (SO2)",
+      "doi": "10.1038/s41586-022-05591-3 ; 10.1038/s41586-023-05902-2",
+      "note": "First exoplanet CO2 (Nature 614,649) and photochemical SO2 (Nature 617,483) detections."
+    },
+    {
+      "name": "HD 189733b", "observable": "transmission+emission", "domain_match": "far",
+      "params": {"star_temperature": 5040.0, "star_radius": 0.76,
+                 "planet_radius_km": 80700.0, "planet_mass_earth": 359.0,
+                 "surface_temperature": 1200.0, "surface_pressure_bar": 1.0, "sma": 0.0313,
+                 "distance_parsec": 19.8},
+      "retrieved_log10_vmr": {"H2O": -3.5, "CO": -3.5, "CH4": -5.5},
+      "citation": "Madhusudhan & Seager 2009; McCullough et al. 2014",
+      "doi": "10.1088/0004-637X/707/1/24",
+      "note": "Archetypal HST/Spitzer benchmark; water-dominated, hazy."
+    },
+    {
+      "name": "WASP-96b", "observable": "transmission", "domain_match": "far",
+      "params": {"star_temperature": 5540.0, "star_radius": 1.05,
+                 "planet_radius_km": 85800.0, "planet_mass_earth": 153.0,
+                 "surface_temperature": 1285.0, "surface_pressure_bar": 1.0, "sma": 0.0453,
+                 "distance_parsec": 351.0},
+      "retrieved_log10_vmr": {"H2O": -3.0, "CO2": -4.5},
+      "citation": "JWST ERS; Radica et al. 2023 MNRAS 524, 835",
+      "doi": "10.1093/mnras/stad1762",
+      "note": "Clear-atmosphere NIRISS water benchmark."
+    },
+    {
+      "name": "WASP-43b", "observable": "emission", "domain_match": "far",
+      "params": {"star_temperature": 4520.0, "star_radius": 0.667,
+                 "planet_radius_km": 74000.0, "planet_mass_earth": 651.0,
+                 "surface_temperature": 1440.0, "surface_pressure_bar": 1.0, "sma": 0.0153,
+                 "distance_parsec": 87.0},
+      "retrieved_log10_vmr": {"H2O": -3.5, "CO2": -4.0, "CH4": -6.5},
+      "citation": "Bell et al. 2024 Nature Astronomy 8, 879 (JWST MIRI phase curve)",
+      "doi": "10.1038/s41550-024-02230-x",
+      "note": "CH4 non-detection (upper limit) is itself a benchmark: disequilibrium chemistry."
+    },
+    {
+      "name": "51 Eridani b", "observable": "direct_imaging", "domain_match": "near",
+      "params": {"star_temperature": 7331.0, "star_radius": 1.45,
+                 "planet_radius_km": 78600.0, "planet_mass_earth": 953.0,
+                 "surface_temperature": 700.0, "surface_pressure_bar": 1.0, "sma": 13.0,
+                 "distance_parsec": 29.4},
+      "retrieved_log10_vmr": {"CH4": -3.0, "H2O": -3.3, "CO2": -4.5},
+      "citation": "Macintosh et al. 2015 Science 350,64; Rajan et al. 2017; Whiteford et al. 2023",
+      "doi": "10.1126/science.aac5891 ; 10.1093/mnras/stad670",
+      "note": "Directly-imaged young Jupiter (reflected+thermal) — the LEAST out-of-domain benchmark; strong CH4."
+    },
+    {
+      "name": "HR 8799 e", "observable": "direct_imaging", "domain_match": "near",
+      "params": {"star_temperature": 7430.0, "star_radius": 1.44,
+                 "planet_radius_km": 85800.0, "planet_mass_earth": 2540.0,
+                 "surface_temperature": 1150.0, "surface_pressure_bar": 1.0, "sma": 16.0,
+                 "distance_parsec": 41.3},
+      "retrieved_log10_vmr": {"H2O": -2.3, "CO": -2.7, "CH4": -5.0},
+      "citation": "Molliere et al. 2020 A&A 640, A131 (petitRADTRANS retrieval)",
+      "doi": "10.1051/0004-6361/202038325",
+      "note": "Directly-imaged; C/O ratio benchmark. CO-rich, CH4-poor (hot)."
+    }
+  ]
+}

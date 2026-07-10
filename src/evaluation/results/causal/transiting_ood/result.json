@@ -1,0 +1,64 @@
+{
+  "section": "G",
+  "suite": "transiting_ood",
+  "title": "Transiting-planet OOD probe",
+  "track": "causal",
+  "status": "ok",
+  "epistemic": "NO ground truth. Wrong observable \u2014 anomaly/stability only, never accuracy.",
+  "headline": {
+    "INARA anomaly median": 0.8057727217674255,
+    "INARA anomaly p95": 1.8558274507522583,
+    "real spectra found": 0
+  },
+  "tables": [
+    {
+      "name": "OOD probe \u2014 anomaly vs INARA training distribution",
+      "columns": [
+        "input",
+        "anomaly (RMS z)",
+        "\u00d7 INARA median",
+        "pred stability (std)"
+      ],
+      "rows": [
+        [
+          "DEMO: WASP-39b-like transmission",
+          2.35,
+          "2.9\u00d7",
+          0.0035
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "\u26d4 NOT AN ACCURACY TEST. These are wrong-observable inputs for a reflected-light direct-imaging model \u2014 any predicted composition is meaningless. The point is to SHOW the inputs are far off-distribution (large anomaly) and/or unstable.",
+    "A high anomaly \u00d7 INARA-median is the expected, desired result: the model correctly sees a transiting spectrum as out-of-distribution.",
+    "To probe real files, drop 2\u20133-column (wavelength_\u00b5m, depth/flux[, err]) spectra into data/real_spectra/ (see fetch_benchmarks.py for optional download helpers)."
+  ],
+  "artifacts": [],
+  "provenance": {
+    "epochs_run": 50,
+    "epochs_planned": 50,
+    "best_epoch": 50,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "aad036b02b155f754cc205a7869d10d5af2be803-dirty",
+    "config_hash": "681fcf86edc3"
+  },
+  "data": {
+    "inara_reference": {
+      "median": 0.8057727217674255,
+      "p95": 1.8558274507522583
+    },
+    "probes": {
+      "demo_transmission": {
+        "anomaly": 2.3543171882629395,
+        "stability_std": 0.0034936368465423584
+      }
+    }
+  },
+  "generated_at": "2026-07-09T22:37:43"
+}

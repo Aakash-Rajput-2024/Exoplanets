@@ -1,0 +1,16 @@
+================================================================================================
+ARCHITECTURE COMPARISON — FROZEN TEST SET, MATCHED BUDGET (ULTRAPLAN C4)
+================================================================================================
+Budget target (registry.MATCHED): loss=huber batch=64 epochs=50 lr=0.001 wd=0.0001 seeds=(0, 1, 2)
+Observable=contrast_snr  labels=clr  input_norm=per_lambda_asinh
+AS-RUN: epochs_run=[10, 48, 50] (planned [10, 50])  seeds/track=[1]  config_hash=MISMATCH {'aa44f9a2ea6d', '681fcf86edc3', 'dab61e7f17bd', 'c588c90bd4d2', 'f0a83e242cb2'}
+⚠ PRELIMINARY — some tracks are undertrained (epochs_run < planned), single-seed (need ≥3 for CIs); numbers below are NOT citable (rerun full budget × ≥3 seeds).
+------------------------------------------------------------------------------------------------
+track           | R2(log10)           | ensemble | RMSE(dex) | MAE(dex) | desc
+------------------------------------------------------------------------------------------------
+optimized1dcnn  | 0.0738 (n=1)        | 0.0738   | 0.4417    | 0.3012   | CNN + BatchNorm + progressive kernels + AdaptiveAvgPool
+transformerarch | 0.0647 (n=1)        | 0.0647   | 0.4432    | 0.3040   | CNN downsample ×8 → 2-layer Transformer → GAP → MLP
+causal          | 0.0578 (n=1)        | 0.0578   | 0.4450    | 0.3051   | Transformer backbone; DSCM counterfactual augmentation (base only here)
+original1dcnn   | 0.0541 (n=1)        | 0.0541   | 0.4458    | 0.3056   | Paper-baseline 4-conv CNN (36M-param FC head)
+2channel1dcnn   | 0.0541 (n=1)        | 0.0541   | 0.4458    | 0.3056   | Same net as original (kept for continuity; identical arch)  [≡ original1dcnn: identical outputs — not independent]
+================================================================================================

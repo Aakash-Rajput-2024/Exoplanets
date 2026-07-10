@@ -1,0 +1,102 @@
+{
+  "track": "transformerarch",
+  "desc": "CNN downsample \u00d78 \u2192 2-layer Transformer \u2192 GAP \u2192 MLP",
+  "seeds": [
+    0
+  ],
+  "n_seeds": 1,
+  "r2_log10_mean": 0.0646807923913002,
+  "r2_log10_std": null,
+  "r2_log10_ensemble": 0.0646807923913002,
+  "rmse_dex": 0.4431542158126831,
+  "mae_dex": 0.304013192653656,
+  "per_species_r2": {
+    "H2O": 0.07044464349746704,
+    "CO2": 0.029186129570007324,
+    "O2": 0.1354643702507019,
+    "N2": -0.06513381004333496,
+    "CH4": 0.11142992973327637,
+    "N2O": -0.030896544456481934,
+    "CO": -0.053871870040893555,
+    "O3": 0.3446584939956665,
+    "SO2": -0.04172360897064209,
+    "NH3": 0.2584015130996704,
+    "C2H6": 0.05001920461654663,
+    "NO2": -0.03180897235870361
+  },
+  "run_config": {
+    "epochs_run": 48,
+    "epochs_planned": 50,
+    "best_epoch": 48,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "741b2672c15b569ca5728e540cebe0860d95ac45-dirty",
+    "config_hash": "aa44f9a2ea6d"
+  },
+  "snr_sweep": [
+    {
+      "alpha": 0.3,
+      "exposure_x": 0.09,
+      "snr_star_median": 0.22203373908996582,
+      "snr_planet_band": 0.8984926342964172,
+      "r2_log10_mean": -0.02830234169960022,
+      "r2_log10_std": 0.0
+    },
+    {
+      "alpha": 1.0,
+      "exposure_x": 1.0,
+      "snr_star_median": 0.7401124238967896,
+      "snr_planet_band": 2.9949753284454346,
+      "r2_log10_mean": 0.0646807923913002,
+      "r2_log10_std": 0.0
+    },
+    {
+      "alpha": 3.0,
+      "exposure_x": 9.0,
+      "snr_star_median": 2.220337390899658,
+      "snr_planet_band": 8.984926223754883,
+      "r2_log10_mean": 0.20348495244979858,
+      "r2_log10_std": 0.0
+    },
+    {
+      "alpha": 10.0,
+      "exposure_x": 100.0,
+      "snr_star_median": 7.401124000549316,
+      "snr_planet_band": 29.949752807617188,
+      "r2_log10_mean": 0.35685908794403076,
+      "r2_log10_std": 0.0
+    },
+    {
+      "alpha": 30.0,
+      "exposure_x": 900.0,
+      "snr_star_median": 22.203372955322266,
+      "snr_planet_band": 89.84925842285156,
+      "r2_log10_mean": 0.4725925922393799,
+      "r2_log10_std": 0.0
+    },
+    {
+      "alpha": 100.0,
+      "exposure_x": 10000.0,
+      "snr_star_median": 74.01124572753906,
+      "snr_planet_band": 299.4975280761719,
+      "r2_log10_mean": 0.5535969138145447,
+      "r2_log10_std": 0.0
+    },
+    {
+      "alpha": 300.0,
+      "exposure_x": 90000.0,
+      "snr_star_median": 222.03372192382812,
+      "snr_planet_band": 898.4926147460938,
+      "r2_log10_mean": 0.587313711643219,
+      "r2_log10_std": 0.0
+    }
+  ],
+  "ceiling": {
+    "r2_log10_mean": 0.41843339800834656,
+    "r2_log10_std": 0.0
+  }
+}

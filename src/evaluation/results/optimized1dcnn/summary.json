@@ -1,0 +1,127 @@
+{
+  "track": "optimized1dcnn",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "n_seeds": 3,
+  "provenance": {
+    "epochs_run": 48,
+    "epochs_planned": 50,
+    "best_epoch": 48,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "unknown",
+    "config_hash": "7c0676e6538c"
+  },
+  "sections": {
+    "A": {
+      "suite": "in_distribution",
+      "status": "ok",
+      "headline": {
+        "R2_covered @a=1": 0.1353524923324585,
+        "R2_all12 @a=1": 0.06677783280611038,
+        "R2_covered noiseless-ref (a=300)": 0.7284820079803467,
+        "R2_all12 noiseless-ref": 0.5301142930984497,
+        "RMSE_all12 (dex) @a=1": 0.44320690631866455,
+        "n_seeds": 3,
+        "per_seed_R2_all12_mean\u00b1std": [
+          0.06278032312790553,
+          0.0031923056881706436
+        ]
+      }
+    },
+    "B": {
+      "suite": "baselines",
+      "status": "ok",
+      "headline": {
+        "neural_all12_R2@a1": 0.06677783280611038,
+        "Ridge_floor_R2": 0.030993184074759483,
+        "beats_linear_floor": true
+      }
+    },
+    "C": {
+      "suite": "cross_generator",
+      "status": "ok",
+      "headline": {
+        "native_R2_covered_ref": 0.7284820079803467,
+        "prt_R2_covered_ref": -3.7359371185302734,
+        "taurex_R2_covered_ref": -0.2735000252723694
+      }
+    },
+    "D": {
+      "suite": "psg_anchor",
+      "status": "preliminary",
+      "headline": {
+        "native_R2_covered_ref": 0.7284820079803467,
+        "anchor_R2_covered_ref": 0.6393628120422363,
+        "anchor/native": 0.8776645202464428,
+        "PASS(\u22650.9\u00d7)": false
+      }
+    },
+    "E": {
+      "suite": "solar_system",
+      "status": "ok",
+      "headline": {
+        "dominant-gas correct (terrestrial)": "0/4",
+        "mean dex-err covered (terrestrial)": 1.5770528073255063
+      }
+    },
+    "F": {
+      "suite": "real_earth",
+      "status": "ok",
+      "headline": {
+        "dominant true": "N2",
+        "dominant pred": "O2",
+        "dominant correct": false,
+        "mean dex-err (covered)": 2.1924097298180887,
+        "ordering \u03c1": 0.8506684844144639
+      }
+    },
+    "G": {
+      "suite": "transiting_ood",
+      "status": "ok",
+      "headline": {
+        "INARA anomaly median": 0.8057727217674255,
+        "INARA anomaly p95": 1.8558274507522583,
+        "real spectra found": 0
+      }
+    },
+    "H": {
+      "suite": "published_retrieval",
+      "status": "ok",
+      "headline": {
+        "n_targets": 6,
+        "n_near-domain (direct-imaging)": 2,
+        "mean dex-err (near-domain)": 1.9819222712484468
+      }
+    },
+    "I": {
+      "suite": "calibration",
+      "status": "ok",
+      "headline": {
+        "n_posterior_samples": 60,
+        "coverage_68 (active)": 0.3598,
+        "coverage_95 (active)": 0.5418000000000001,
+        "PIT-KS (active mean)": 0.3176,
+        "reliability_ECE": 0.2667631578947368,
+        "TARP_ECE": 0.3415238095238095,
+        "posterior_spread(dex)": 0.08080918341875076
+      }
+    },
+    "J": {
+      "suite": "ood_honesty",
+      "status": "ok",
+      "headline": {
+        "prt_verdict": "no transfer (genuine)",
+        "taurex_verdict": "no transfer (genuine)",
+        "psg_verdict": "biased extrapolation (fixable)"
+      }
+    }
+  }
+}

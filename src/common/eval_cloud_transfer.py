@@ -39,6 +39,9 @@ CONDITIONS = ("clear", "grey", "non_grey", "band_selective", "patchy")
 
 def _ckpt(track, seed, suffix):
     d = os.path.dirname(track_config(track)["model_py"])
+    p_track = os.path.join(d, "checkpoints_v2", f"model_best_{track}_seed{seed}{suffix}.pth")
+    if os.path.exists(p_track):
+        return p_track
     return os.path.join(d, "checkpoints_v2", f"model_best_seed{seed}{suffix}.pth")
 
 

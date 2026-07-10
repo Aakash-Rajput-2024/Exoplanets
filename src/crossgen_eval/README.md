@@ -36,10 +36,14 @@ stellar Planck continuum imprinted with molecular bands from TauREx's
 transmission opacity, then empirically calibrated to INARA's median scale.
 
 This is a *simplified* reflected-light model (no multiple scattering, no surface
-albedo spectrum, no proper thermal+reflected mix). petitRADTRANS (deferred) does
-proper scattering and is the path to higher fidelity — drop in
-`engines/prt_engine.py` behind the same `generate_planet_shape` /
-`stellar_continuum_shape` interface and run with `--engine prt`.
+albedo spectrum, no proper thermal+reflected mix). petitRADTRANS does proper
+scattering/thermal emission and is the path to higher fidelity — see
+`src/evaluation/engines/prt_engine.py`, behind the same `generate_planet_shape` /
+`stellar_continuum_shape` interface, run with `--engine prt`.
+
+Both generator backends live in `src/evaluation/engines/` (a sibling package to
+`crossgen_eval`, since they run in their own venvs — `MultiREx-public/.venv` for
+TauREx, `.venv_prt` for petitRADTRANS — independent of the torch/model code here).
 
 ## Interpreting results — caveats
 Negative R² currently reflects a mix of: (a) spectral domain shift (the real

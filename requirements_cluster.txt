@@ -1,0 +1,15 @@
+# Cluster (PARAM Rudra / A100) dependency list — everything EXCEPT torch.
+#
+# On HPC, install PyTorch with the cluster's CUDA build via conda FIRST, then
+# `pip install -r requirements_cluster.txt` for the rest. Keeping torch OUT of this
+# file prevents pip from clobbering the CUDA-enabled conda build with a CPU wheel.
+#
+#   conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
+#   pip install -r requirements_cluster.txt
+#
+numpy>=2.0
+pandas>=2.0
+scipy>=1.10
+matplotlib>=3.8
+tqdm>=4.65
+scikit-learn>=1.3

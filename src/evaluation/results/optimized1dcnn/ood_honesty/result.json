@@ -1,0 +1,147 @@
+{
+  "section": "J",
+  "suite": "ood_honesty",
+  "title": "OOD honesty (\u03b4/v, raw vs debiased R\u00b2)",
+  "track": "optimized1dcnn",
+  "status": "ok",
+  "epistemic": "Decomposes cross-gen R\u00b2 into input shift + bias vs genuine information loss.",
+  "headline": {
+    "prt_verdict": "no transfer (genuine)",
+    "taurex_verdict": "no transfer (genuine)",
+    "psg_verdict": "biased extrapolation (fixable)"
+  },
+  "tables": [
+    {
+      "name": "OOD decomposition (covered species)",
+      "columns": [
+        "engine",
+        "med|\u03b4|",
+        "med v",
+        "frac \u03bb in-family",
+        "R\u00b2_raw",
+        "R\u00b2_debiased",
+        "r\u00b2_pearson",
+        "verdict"
+      ],
+      "rows": [
+        [
+          "prt",
+          1.63,
+          0.16,
+          0.0,
+          -3.736,
+          -1.327,
+          0.001,
+          "no transfer (genuine)"
+        ],
+        [
+          "taurex",
+          0.89,
+          0.0,
+          0.0,
+          -0.274,
+          -0.096,
+          0.0,
+          "no transfer (genuine)"
+        ],
+        [
+          "psg",
+          0.01,
+          0.99,
+          1.0,
+          0.639,
+          0.66,
+          0.672,
+          "biased extrapolation (fixable)"
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "\u03b4,v are computed AFTER the INARA-fit norm, so \u03b4\u22480 / v\u22481 means the generator input sits inside INARA's distribution at that wavelength.",
+    "A raw negative R\u00b2 is never published without its debiased companion (this section)."
+  ],
+  "artifacts": [
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/optimized1dcnn/ood_honesty/ood_delta_prt.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/optimized1dcnn/ood_honesty/ood_delta_taurex.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/optimized1dcnn/ood_honesty/ood_delta_psg.png"
+  ],
+  "provenance": {
+    "epochs_run": 48,
+    "epochs_planned": 50,
+    "best_epoch": 48,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "unknown",
+    "config_hash": "7c0676e6538c"
+  },
+  "data": {
+    "engines": {
+      "prt": {
+        "shift": {
+          "median_abs_delta": 1.6307355165481567,
+          "median_v_ratio": 0.16053035855293274,
+          "frac_lambda_in_family": 0.0
+        },
+        "debiased_r2": {
+          "covered": [
+            "H2O",
+            "CO2",
+            "O2",
+            "CH4",
+            "O3"
+          ],
+          "mean_r2_raw": -3.7359365216223943,
+          "mean_r2_debiased": -1.3272701955411974,
+          "mean_r2_pearson": 0.0013827193658884933
+        },
+        "verdict": "no transfer (genuine)"
+      },
+      "taurex": {
+        "shift": {
+          "median_abs_delta": 0.8900997638702393,
+          "median_v_ratio": 0.00013153976760804653,
+          "frac_lambda_in_family": 0.0
+        },
+        "debiased_r2": {
+          "covered": [
+            "H2O",
+            "CO2",
+            "O2",
+            "CH4",
+            "O3"
+          ],
+          "mean_r2_raw": -0.27350042210657544,
+          "mean_r2_debiased": -0.09634464301050834,
+          "mean_r2_pearson": 0.00020491217916796081
+        },
+        "verdict": "no transfer (genuine)"
+      },
+      "psg": {
+        "shift": {
+          "median_abs_delta": 0.013066688552498817,
+          "median_v_ratio": 0.9933611154556274,
+          "frac_lambda_in_family": 1.0
+        },
+        "debiased_r2": {
+          "covered": [
+            "H2O",
+            "CO2",
+            "O2",
+            "CH4",
+            "O3"
+          ],
+          "mean_r2_raw": 0.639363154107695,
+          "mean_r2_debiased": 0.6603565328162988,
+          "mean_r2_pearson": 0.6722469024190858
+        },
+        "verdict": "biased extrapolation (fixable)"
+      }
+    }
+  },
+  "generated_at": "2026-07-09T22:20:22"
+}

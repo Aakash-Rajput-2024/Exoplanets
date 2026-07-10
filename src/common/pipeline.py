@@ -44,6 +44,7 @@ from common.inputs import (
     fit_norm,
     norm_from_state,
 )
+from common.counterfactuals import CFNoiseCollate, CFInvarianceCollate
 from common import cloud_families
 
 # Eval-time noise seeds — fixed so every model is scored on identical spectra.
@@ -117,6 +118,8 @@ def build_datasets(
     train_seed=0,
     noise_train=True,
     cloud_train=None,
+    cf_train=False,
+    cf_invariance=False,
     splits=("train", "val", "test"),
 ):
     """Build the requested split datasets under the observable/label/norm config.
@@ -144,6 +147,17 @@ def build_datasets(
             train_ds = RawCloudObservableDataset(x, noise, cont, y_enc)
             train_collate = CloudNoiseCollate(obs_mode, norm, alpha=alpha, base_seed=train_seed,
                                               alpha_range=alpha_train_range)
+        elif cf_invariance:
+            # Causal (do-calculus) track, invariance objective: returns (anchor,
+            # counterfactual) pairs; the trainer adds the invariance penalty.
+            train_ds = RawObservableDataset(x, noise, y_enc)
+            train_collate = CFInvarianceCollate(obs_mode, norm, alpha=alpha, base_seed=train_seed,
+                                                alpha_range=alpha_train_range)
+        elif cf_train:
+            # Causal (do-calculus) track: exact environment counterfactual AUGMENTATION.
+            train_ds = RawObservableDataset(x, noise, y_enc)
+            train_collate = CFNoiseCollate(obs_mode, norm, alpha=alpha, base_seed=train_seed,
+                                           alpha_range=alpha_train_range)
         elif noise_train:
             train_ds = RawObservableDataset(x, noise, y_enc)
             train_collate = NoiseCollate(obs_mode, norm, alpha=alpha, base_seed=train_seed,
@@ -154,7 +168,12 @@ def build_datasets(
         if train_collate is not None:
             train_collate.set_epoch(0)
             probe_x, _ = train_collate([train_ds[0], train_ds[1]])
-            in_channels, seq_len = probe_x.shape[1], probe_x.shape[2]
+            # CFInvarianceCollate returns a (2, B, C, L) anchor/counterfactual pair;
+            # every other collate returns (B, C, L).
+            if probe_x.dim() == 4:
+                in_channels, seq_len = probe_x.shape[2], probe_x.shape[3]
+            else:
+                in_channels, seq_len = probe_x.shape[1], probe_x.shape[2]
         else:
             probe = train_ds[0][0]
             in_channels, seq_len = probe.shape[0], probe.shape[1]

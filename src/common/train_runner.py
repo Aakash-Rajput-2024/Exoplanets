@@ -170,12 +170,27 @@ def _load_resume(path, model, optimizer, scheduler, loader_gen, device):
 
 
 def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
-              num_workers=0, cloud=None, resume=False, diag=False):
+              num_workers=0, cloud=None, resume=False, diag=False, cf=False,
+              cf_invariance=False, lambda_inv=None):
     cfg = track_config(track)
     if epochs is not None:
         cfg["epochs"] = epochs
+    if lambda_inv is not None:
+        cfg["lambda_inv"] = lambda_inv
+    if cf and cf_invariance:
+        raise SystemExit("--cf and --cf-invariance are mutually exclusive (augmentation vs objective).")
+    if cloud and (cf or cf_invariance):
+        print("  [warn] --cloud takes precedence over --cf/--cf-invariance in the "
+              "pipeline; the counterfactual objective will NOT be applied this run.")
     cfg["cloud_train"] = cloud
-    suffix = f"_{cloud}" if cloud else ""
+    cfg["cf_train"] = cf
+    cfg["cf_invariance"] = cf_invariance
+    # Distinct checkpoint suffix PER TRAINING OBJECTIVE so a counterfactual run can
+    # never silently overwrite the plain control checkpoint (2026-07-08 audit fix):
+    #   _cfi = counterfactual-invariance objective, _cf = cf augmentation,
+    #   (none) = control; grey clouds append _grey as before.
+    obj = "_cfi" if cf_invariance else ("_cf" if cf else "")
+    suffix = obj + (f"_{cloud}" if cloud else "")
     device = get_device()
     track_dir = os.path.dirname(cfg["model_py"])
     ckpt_dir = os.path.join(track_dir, "checkpoints_v2")
@@ -191,7 +206,7 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
         cache_dir, obs_mode=cfg["obs_mode"], label_transform=cfg["label_transform"],
         input_norm=cfg["input_norm"], alpha=cfg["alpha"],
         alpha_train_range=cfg.get("alpha_train_range"), train_seed=seed,
-        cloud_train=cloud,
+        cloud_train=cloud, cf_train=cf, cf_invariance=cf_invariance,
     )
     train_ds, val_ds = data.train_ds, data.val_ds
     if smoke:
@@ -221,13 +236,15 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
                             num_workers=num_workers)
 
     criterion = _make_loss(cfg["loss"])
+    inv_criterion = nn.MSELoss()          # counterfactual-invariance penalty (CLR space)
+    lam_inv = float(cfg.get("lambda_inv", 1.0))
     optimizer = optim.Adam(model.parameters(), lr=cfg["lr"], weight_decay=cfg["weight_decay"])
     scheduler = _cosine_warmup(optimizer, cfg["warmup_epochs"], cfg["epochs"], len(train_loader))
 
     best_val, no_improve = float("inf"), 0
     history = []  # per-epoch dicts
     start_epoch = 0
-    resume_path = os.path.join(ckpt_dir, f"last_seed{seed}{suffix}.pth")
+    resume_path = os.path.join(ckpt_dir, f"last_{track}_seed{seed}{suffix}.pth")
     if resume and os.path.exists(resume_path) and not smoke:
         start_epoch, best_val, no_improve, history = _load_resume(
             resume_path, model, optimizer, scheduler, loader_gen, device)
@@ -255,9 +272,18 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
         model.train()
         tl, t0 = 0.0, time.time()
         for x, y in tqdm(train_loader, desc=f"E{epoch+1}/{cfg['epochs']} train"):
-            x, y = x.to(device), y.to(device)
             optimizer.zero_grad()
-            loss = criterion(model(x), y)
+            if x.dim() == 4:
+                # (2, B, C, L) anchor/counterfactual pair (CFInvarianceCollate):
+                # task loss on the anchor + λ · invariance penalty across the exact
+                # do(environment) intervention. Predictions must not move.
+                y = y.to(device)
+                pred_a = model(x[0].to(device))
+                pred_cf = model(x[1].to(device))
+                loss = criterion(pred_a, y) + lam_inv * inv_criterion(pred_a, pred_cf)
+            else:
+                x, y = x.to(device), y.to(device)
+                loss = criterion(model(x), y)
             loss.backward()
             if cfg["grad_clip"]:
                 torch.nn.utils.clip_grad_norm_(model.parameters(), cfg["grad_clip"])
@@ -292,12 +318,14 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
                 "in_channels": data.in_channels, "seq_len": data.seq_len,
                 "history": history,
             }, {k: cfg[k] for k in cfg if k != "seeds"} | {"seed": seed}, repo_dir=REPO)
-            torch.save(state, os.path.join(ckpt_dir, f"model_best_seed{seed}{suffix}.pth"))
+            torch.save(state, os.path.join(ckpt_dir, f"model_best_{track}_seed{seed}{suffix}.pth"))
 
         # Resumable snapshot AFTER the epoch (state now points at epoch+1). Only
         # when --resume; the default path writes nothing new.
         if resume and not smoke:
-            _save_resume(resume_path, epoch + 1, model, optimizer, scheduler,
+            # Re-generate resume_path to ensure we write to the track-specific name
+            actual_resume_path = os.path.join(ckpt_dir, f"last_{track}_seed{seed}{suffix}.pth")
+            _save_resume(actual_resume_path, epoch + 1, model, optimizer, scheduler,
                          loader_gen, best_val, no_improve, history)
 
         if no_improve >= cfg["patience"]:
@@ -305,7 +333,7 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
             break
 
     # --- persist logs + curves ------------------------------------------------
-    tag = f"seed{seed}{suffix}"
+    tag = f"{track}_seed{seed}{suffix}"
     if not smoke:
         with open(os.path.join(logs_dir, f"logs_{tag}.json"), "w") as f:
             json.dump({"track": track, "seed": seed, "config":
@@ -348,6 +376,15 @@ def main():
     ap.add_argument("--cache", default=CACHE_V2)
     ap.add_argument("--cloud", default=None, choices=[None, "grey"],
                     help="grey-cloud training augmentation for the C5 seen/unseen study")
+    ap.add_argument("--cf", action="store_true",
+                    help="causal (do-calculus) AUGMENTATION: exact environment counterfactual "
+                         "— same atmosphere, re-paired host star + noise (checkpoint suffix _cf)")
+    ap.add_argument("--cf-invariance", action="store_true",
+                    help="causal (do-calculus) INVARIANCE objective: penalise the retrieval for "
+                         "changing under an exact do(environment) intervention "
+                         "(L=task+λ·‖f(x)−f(x^do)‖²). Novel vs --cf. Checkpoint suffix _cfi")
+    ap.add_argument("--lambda-inv", type=float, default=None,
+                    help="override counterfactual-invariance strength λ (default MATCHED['lambda_inv'])")
     ap.add_argument("--resume", action="store_true",
                     help="write a resumable snapshot each epoch and continue from it if present "
                          "(checkpoints_v2/last_seed{S}.pth); default off leaves behavior unchanged")
@@ -363,7 +400,8 @@ def main():
     for s in seeds:
         train_one(a.track, s, cache_dir=a.cache, epochs=a.epochs,
                   smoke=a.smoke, num_workers=a.num_workers, cloud=a.cloud,
-                  resume=a.resume, diag=a.diag)
+                  resume=a.resume, diag=a.diag, cf=a.cf,
+                  cf_invariance=a.cf_invariance, lambda_inv=a.lambda_inv)
 
 
 if __name__ == "__main__":

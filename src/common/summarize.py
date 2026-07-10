@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import os
 
+import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -103,11 +104,43 @@ def collate(out_dir=None):
 
     names = [r["track"] for r in rows]
     means = [r["r2_log10_mean"] for r in rows]
-    stds = [(r["r2_log10_std"] if r.get("r2_log10_std") is not None else 0.0) for r in rows]
+    # Single-seed tracks (r2_log10_std is None) have no measured seed-to-seed
+    # variance. Silently falling back to std=0.0 draws a real-looking ±0 error
+    # bar that implies "measured zero variance" rather than "no data" — the
+    # same degenerate-error-bar bug fixed in common.evaluate (issue #2). Use
+    # the bootstrap CI (test-planet resample) on the ensemble headline instead,
+    # when present; only bars with a real multi-seed std get a symmetric yerr.
+    yerr_lo, yerr_hi = [], []
+    for r in rows:
+        std = r.get("r2_log10_std")
+        if std is not None:
+            yerr_lo.append(std)
+            yerr_hi.append(std)
+        else:
+            lo = r.get("r2_log10_ensemble_ci_lo")
+            hi = r.get("r2_log10_ensemble_ci_hi")
+            mean = r["r2_log10_mean"]
+            if lo is not None and hi is not None:
+                yerr_lo.append(max(0.0, mean - lo))
+                yerr_hi.append(max(0.0, hi - mean))
+            else:
+                # No bootstrap CI in this (stale) summary.json either — omit
+                # the error bar rather than fabricate a std=0.0 bar.
+                yerr_lo.append(np.nan)
+                yerr_hi.append(np.nan)
+    have_err = [not (np.isnan(lo) or np.isnan(hi)) for lo, hi in zip(yerr_lo, yerr_hi)]
+    yerr = [[0.0 if np.isnan(v) else v for v in yerr_lo],
+            [0.0 if np.isnan(v) else v for v in yerr_hi]]
     plt.figure(figsize=(10, 5))
-    plt.bar(names, means, yerr=stds, capsize=5, color="steelblue", alpha=0.85)
+    plt.bar(names, means, color="steelblue", alpha=0.85)
+    # errorbar() per-bar so tracks with no CI/std at all get no cap drawn.
+    for i, (name, mean) in enumerate(zip(names, means)):
+        if have_err[i]:
+            plt.errorbar(name, mean, yerr=[[yerr[0][i]], [yerr[1][i]]],
+                        fmt="none", ecolor="black", capsize=5)
     plt.ylabel("Overall test R² (log10)")
-    plt.title("Architecture comparison at matched budget (test set, mean±std over seeds)")
+    plt.title("Architecture comparison at matched budget (test set, mean±std over "
+             "seeds; bootstrap CI where single-seed)")
     plt.xticks(rotation=20)
     plt.grid(axis="y", alpha=0.3)
     plt.tight_layout()

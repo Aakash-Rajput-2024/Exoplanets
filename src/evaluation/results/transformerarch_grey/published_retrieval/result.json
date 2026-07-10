@@ -1,0 +1,257 @@
+{
+  "section": "H",
+  "suite": "published_retrieval",
+  "title": "Published-retrieval comparison (benchmark exoplanets)",
+  "track": "transformerarch_grey",
+  "status": "ok",
+  "epistemic": "Pseudo-truth: literature posteriors. Mostly OOD observable \u2014 ordering, not accuracy.",
+  "headline": {
+    "n_targets": 6,
+    "n_near-domain (direct-imaging)": 2,
+    "mean dex-err (near-domain)": 1.925203413691547
+  },
+  "tables": [
+    {
+      "name": "Model vs published retrieval (dex error on retrieved species)",
+      "columns": [
+        "target",
+        "domain",
+        "observable",
+        "retrieved",
+        "mean dex-err",
+        "\u03c1"
+      ],
+      "rows": [
+        [
+          "WASP-39b",
+          "far",
+          "transmission",
+          "H2O,CO2,CO,SO2,CH4",
+          2.66,
+          -0.8
+        ],
+        [
+          "HD 189733b",
+          "far",
+          "transmission+emission",
+          "H2O,CO,CH4",
+          2.38,
+          -0.87
+        ],
+        [
+          "WASP-96b",
+          "far",
+          "transmission",
+          "H2O,CO2",
+          1.94,
+          -1.0
+        ],
+        [
+          "WASP-43b",
+          "far",
+          "emission",
+          "H2O,CO2,CH4",
+          3.16,
+          -1.0
+        ],
+        [
+          "51 Eridani b",
+          "near",
+          "direct_imaging",
+          "CH4,H2O,CO2",
+          2.11,
+          0.5
+        ],
+        [
+          "HR 8799 e",
+          "near",
+          "direct_imaging",
+          "H2O,CO,CH4",
+          1.74,
+          -1.0
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "Published abundances are themselves MODEL-DEPENDENT posterior estimates (often with large error bars / degeneracies) \u2014 pseudo-truth, not ground truth.",
+    "domain_match=far (transmission/emission hot Jupiters) is a DIFFERENT observable than this model's reflected-light domain: those rows are context, NOT accuracy. Only domain_match=near (directly-imaged giants) is a meaningful, still-caveated comparison.",
+    "Spectra are band-template proxies from published params; see reflected_engine docstring."
+  ],
+  "artifacts": [],
+  "provenance": {
+    "epochs_run": 10,
+    "epochs_planned": 10,
+    "best_epoch": 10,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "aad036b02b155f754cc205a7869d10d5af2be803-dirty",
+    "config_hash": "b6a615ccc097"
+  },
+  "data": {
+    "targets": {
+      "WASP-39b": {
+        "observable": "transmission",
+        "domain_match": "far",
+        "mean_dex_error_retrieved": 2.6609035280943196,
+        "ordering_rho": -0.7999999999999999,
+        "retrieved_species": [
+          "H2O",
+          "CO2",
+          "CO",
+          "SO2",
+          "CH4"
+        ],
+        "doi": "10.1038/s41586-022-05591-3 ; 10.1038/s41586-023-05902-2",
+        "pred": {
+          "H2O": 0.0038737666327506304,
+          "CO2": 0.08206629008054733,
+          "O2": 0.21250054240226746,
+          "N2": 0.4906825125217438,
+          "CH4": 0.17344553768634796,
+          "N2O": 0.01029549166560173,
+          "CO": 0.010437659919261932,
+          "O3": 0.0010232734493911266,
+          "SO2": 0.011077789589762688,
+          "NH3": 0.0038924163673073053,
+          "C2H6": 0.0007021255441941321,
+          "NO2": 2.6117259039892815e-06
+        }
+      },
+      "HD 189733b": {
+        "observable": "transmission+emission",
+        "domain_match": "far",
+        "mean_dex_error_retrieved": 2.382754220756763,
+        "ordering_rho": -0.8660254037844387,
+        "retrieved_species": [
+          "H2O",
+          "CO",
+          "CH4"
+        ],
+        "doi": "10.1088/0004-637X/707/1/24",
+        "pred": {
+          "H2O": 0.002471229061484337,
+          "CO2": 0.07607632875442505,
+          "O2": 0.23188896477222443,
+          "N2": 0.48261481523513794,
+          "CH4": 0.16820968687534332,
+          "N2O": 0.010659092105925083,
+          "CO": 0.010702830739319324,
+          "O3": 0.00120252906344831,
+          "SO2": 0.011295109987258911,
+          "NH3": 0.004200436174869537,
+          "C2H6": 0.0006762278499081731,
+          "NO2": 2.784875732686487e-06
+        }
+      },
+      "WASP-96b": {
+        "observable": "transmission",
+        "domain_match": "far",
+        "mean_dex_error_retrieved": 1.9438322175183873,
+        "ordering_rho": -0.9999999999999999,
+        "retrieved_species": [
+          "H2O",
+          "CO2"
+        ],
+        "doi": "10.1093/mnras/stad1762",
+        "pred": {
+          "H2O": 0.0031827203929424286,
+          "CO2": 0.076712466776371,
+          "O2": 0.2153225839138031,
+          "N2": 0.49570584297180176,
+          "CH4": 0.1691785603761673,
+          "N2O": 0.011175698600709438,
+          "CO": 0.010886629112064838,
+          "O3": 0.0011796366889029741,
+          "SO2": 0.011376891285181046,
+          "NH3": 0.004587735049426556,
+          "C2H6": 0.0006888434290885925,
+          "NO2": 2.4614064386696555e-06
+        }
+      },
+      "WASP-43b": {
+        "observable": "emission",
+        "domain_match": "far",
+        "mean_dex_error_retrieved": 3.1645436780831644,
+        "ordering_rho": -1.0,
+        "retrieved_species": [
+          "H2O",
+          "CO2",
+          "CH4"
+        ],
+        "doi": "10.1038/s41550-024-02230-x",
+        "pred": {
+          "H2O": 0.002491064602509141,
+          "CO2": 0.07323193550109863,
+          "O2": 0.22852680087089539,
+          "N2": 0.4859022796154022,
+          "CH4": 0.17082267999649048,
+          "N2O": 0.010627662762999535,
+          "CO": 0.010771513916552067,
+          "O3": 0.0011808709241449833,
+          "SO2": 0.011400544084608555,
+          "NH3": 0.004353691358119249,
+          "C2H6": 0.0006876833504065871,
+          "NO2": 3.2359405395254726e-06
+        }
+      },
+      "51 Eridani b": {
+        "observable": "direct_imaging",
+        "domain_match": "near",
+        "mean_dex_error_retrieved": 2.1113854629903437,
+        "ordering_rho": 0.5,
+        "retrieved_species": [
+          "CH4",
+          "H2O",
+          "CO2"
+        ],
+        "doi": "10.1126/science.aac5891 ; 10.1093/mnras/stad670",
+        "pred": {
+          "H2O": 0.002250863239169121,
+          "CO2": 0.09587479382753372,
+          "O2": 0.2401772439479828,
+          "N2": 0.4655463397502899,
+          "CH4": 0.15852685272693634,
+          "N2O": 0.0109914131462574,
+          "CO": 0.010484014637768269,
+          "O3": 0.0012723116669803858,
+          "SO2": 0.010938427411019802,
+          "NH3": 0.0033039720728993416,
+          "C2H6": 0.0006316902581602335,
+          "NO2": 1.972297241081833e-06
+        }
+      },
+      "HR 8799 e": {
+        "observable": "direct_imaging",
+        "domain_match": "near",
+        "mean_dex_error_retrieved": 1.7390213643927501,
+        "ordering_rho": -1.0,
+        "retrieved_species": [
+          "H2O",
+          "CO",
+          "CH4"
+        ],
+        "doi": "10.1051/0004-6361/202038325",
+        "pred": {
+          "H2O": 0.002613468561321497,
+          "CO2": 0.08513020724058151,
+          "O2": 0.23528684675693512,
+          "N2": 0.47745394706726074,
+          "CH4": 0.16076000034809113,
+          "N2O": 0.01109755877405405,
+          "CO": 0.010668500326573849,
+          "O3": 0.0012975337449461222,
+          "SO2": 0.0111050670966506,
+          "NH3": 0.003937978763133287,
+          "C2H6": 0.0006468911306001246,
+          "NO2": 2.0329996459622635e-06
+        }
+      }
+    }
+  },
+  "generated_at": "2026-07-09T13:41:40"
+}

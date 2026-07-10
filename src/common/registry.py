@@ -61,6 +61,9 @@ MATCHED = dict(
     warmup_epochs=5,
     grad_clip=1.0,
     patience=15,
+    lambda_inv=1.0,                # strength of the counterfactual-invariance penalty
+                                   # (only used when --cf-invariance is set; see the
+                                   # causal_cfi track and common/counterfactuals.py).
     seeds=(0, 1, 2),               # H6
 )
 
@@ -71,10 +74,13 @@ TRACKS = {
         model_py=f"{SRC}/original1dcnn/model.py", model_cls="NasaInaraModel",
         desc="Paper-baseline 4-conv CNN (36M-param FC head)",
     ),
-    "2channel1dcnn": dict(
-        model_py=f"{SRC}/2channel1dcnn/model.py", model_cls="NasaInaraModel",
-        desc="Same net as original (kept for continuity; identical arch)",
-    ),
+    # NOTE: '2channel1dcnn' was REMOVED (2026-07-08 audit). Under the shared
+    # matched-budget harness it is a byte-for-byte duplicate of original1dcnn
+    # (in_channels forced to 2 for every track; identical model file; bit-identical
+    # predictions to 17 digits) — it was one baseline double-counted as two. Its
+    # historical role (1- vs 2-channel input) no longer exists in v2. The stale
+    # src/2channel1dcnn/ directory is kept for provenance but must NOT be reported
+    # as an independent architecture.
     "optimized1dcnn": dict(
         model_py=f"{SRC}/optimized1dcnn/model.py", model_cls="NasaInaraModel",
         desc="CNN + BatchNorm + progressive kernels + AdaptiveAvgPool",
@@ -83,13 +89,34 @@ TRACKS = {
         model_py=f"{SRC}/transformerarch/model.py", model_cls="NasaInaraTransformer",
         desc="CNN downsample ×8 → 2-layer Transformer → GAP → MLP",
     ),
-    # Causal ARCHITECTURE == transformer. Trained here WITHOUT counterfactuals it
-    # is control (a) from C4 ("baseline transformer, identical schedule as
-    # causal"). The counterfactual-augmented and placebo variants require the
-    # DSCM to be regenerated in the new observable space (deferred; see journal).
+    # Causal ARCHITECTURE == transformer (identical backbone). The three causal
+    # variants differ ONLY in the training objective, so the comparison is a clean
+    # ablation of the causal machinery, not of capacity:
+    #   causal      : --cf              exact do(env) counterfactual AUGMENTATION
+    #                 (re-paired host star + noise; the old, weaker "just show more
+    #                  environments" behaviour — kept as the augmentation baseline).
+    #   causal_cfi  : --cf-invariance   exact do(env) counterfactual INVARIANCE
+    #                 objective — penalises the retrieval prediction for CHANGING
+    #                 under the intervention: L = task + λ·‖f(x) − f(x^do(env=j))‖².
+    #                 Because INARA draws atmosphere ⟂ environment, the intervention
+    #                 is EXACT (not a learned/approximate environment as in IRM/DG),
+    #                 so the invariance target is correct by construction — this is
+    #                 the track's methodological novelty. See common/counterfactuals.py.
+    # Train the plain-transformer control with neither flag for the ablation.
     "causal": dict(
         model_py=f"{SRC}/causal/cnn_trnas/model.py", model_cls="NasaInaraTransformer",
-        desc="Transformer backbone; DSCM counterfactual augmentation (base only here)",
+        desc="Transformer backbone; exact do(env) counterfactual augmentation (--cf)",
+    ),
+    "causal_cfi": dict(
+        model_py=f"{SRC}/causal/cnn_trnas/model.py", model_cls="NasaInaraTransformer",
+        desc="Transformer backbone; exact-intervention counterfactual-invariance objective (--cf-invariance)",
+    ),
+    # ~2M-param dedicated do-calculus backbone (wider/deeper transformer + attention
+    # pooling). Intended headline model for the invariance objective; train with:
+    #   python -m common.train_runner causal_xl --cf-invariance --seed 0
+    "causal_xl": dict(
+        model_py=f"{SRC}/causal/cnn_trnas/causal_model.py", model_cls="NasaInaraCausalNet",
+        desc="~2M-param transformer for the do-calculus counterfactual-invariance objective (--cf-invariance)",
     ),
 }
 

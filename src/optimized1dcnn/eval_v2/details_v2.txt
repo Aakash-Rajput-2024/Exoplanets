@@ -41,4 +41,17 @@ alpha   | exposure × | SNR_star(med) | SNR_planet(band) | R2(log10) mean±std
 30.0    | 900.0      | 22.203        | 89.849           | 0.4390 ± 0.0000
 100.0   | 10000.0    | 74.011        | 299.498          | 0.5151 ± 0.0000
 300.0   | 90000.0    | 222.034       | 898.493          | 0.5472 ± 0.0000
+--------------------------------------------------------------------------------
+NOISELESS CEILING (zero injected contrast noise; the true α→∞ limit —
+NOT a claim this exposure is achievable): R²(log10) = 0.5048 ± 0.0000
+Fraction of this ceiling reached at each exposure in the sweep:
+  α=0.3    :   -5.0%
+  α=1.0    :   14.6%
+  α=3.0    :   41.6%
+  α=10.0   :   67.1%
+  α=30.0   :   87.0%
+  α=100.0  :  102.0%
+  α=300.0  :  108.4%
+A small gap at high α means exposure time, not model/architecture capacity,
+is the bottleneck; a large persistent gap means the reverse.
 ================================================================================

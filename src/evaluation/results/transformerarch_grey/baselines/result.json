@@ -1,0 +1,146 @@
+{
+  "section": "B",
+  "suite": "baselines",
+  "title": "Classical baselines (PriorMean / Ridge / RandomForest)",
+  "track": "transformerarch_grey",
+  "status": "ok",
+  "epistemic": "Ground truth: exact. The linear/prior information floor the neural net must beat.",
+  "headline": {
+    "neural_all12_R2@a1": 0.020972291007637978,
+    "Ridge_floor_R2": 0.030993184074759483,
+    "beats_linear_floor": false
+  },
+  "tables": [
+    {
+      "name": "Overall R\u00b2(log10), all-12, same observable & \u03b1",
+      "columns": [
+        "model",
+        "R\u00b2(log10)",
+        "note"
+      ],
+      "rows": [
+        [
+          "PriorMean",
+          -0.059152036905288696,
+          "no-information reference (R\u00b2\u22480 line)"
+        ],
+        [
+          "Ridge",
+          0.030993184074759483,
+          "linear information floor"
+        ],
+        [
+          "RandomForest",
+          0.012963672168552876,
+          "capacity-limited nonlinear ref"
+        ],
+        [
+          "THIS: transformerarch_grey (\u03b1=1)",
+          0.020972291007637978,
+          "neural, same observable/\u03b1"
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "Baselines are TRACK-INDEPENDENT (classical fits on the same cache); the neural row is this track at \u03b1=1. For the rigorous paired-bootstrap-significant comparison at \u03b1*, see VALIDATION_PLAN A3.",
+    "\u26a0 This track's \u03b1=1 R\u00b2 does NOT exceed the Ridge floor \u2014 at the photon floor that is expected; compare at the noiseless ref / \u03b1* before concluding."
+  ],
+  "artifacts": [],
+  "provenance": {
+    "epochs_run": 10,
+    "epochs_planned": 10,
+    "best_epoch": 10,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "aad036b02b155f754cc205a7869d10d5af2be803-dirty",
+    "config_hash": "b6a615ccc097"
+  },
+  "data": {
+    "baselines": {
+      "PriorMean": -0.059152036905288696,
+      "Ridge": 0.030993184074759483,
+      "RandomForest": 0.012963672168552876
+    },
+    "neural_alpha1": {
+      "per_species": {
+        "H2O": {
+          "r2": -0.006008625030517578,
+          "rmse_dex": 0.4532385468482971,
+          "mae_dex": 0.3067335784435272
+        },
+        "CO2": {
+          "r2": -0.02940547466278076,
+          "rmse_dex": 0.3724542260169983,
+          "mae_dex": 0.24023975431919098
+        },
+        "O2": {
+          "r2": 0.0877336859703064,
+          "rmse_dex": 0.3695981800556183,
+          "mae_dex": 0.24001730978488922
+        },
+        "N2": {
+          "r2": -0.07023286819458008,
+          "rmse_dex": 0.3928576111793518,
+          "mae_dex": 0.24921146035194397
+        },
+        "CH4": {
+          "r2": 0.04491138458251953,
+          "rmse_dex": 0.4354483485221863,
+          "mae_dex": 0.3021704852581024
+        },
+        "N2O": {
+          "r2": -0.059950947761535645,
+          "rmse_dex": 0.45718199014663696,
+          "mae_dex": 0.3146950900554657
+        },
+        "CO": {
+          "r2": -0.06650567054748535,
+          "rmse_dex": 0.47553128004074097,
+          "mae_dex": 0.32650548219680786
+        },
+        "O3": {
+          "r2": 0.2864447236061096,
+          "rmse_dex": 0.4948123097419739,
+          "mae_dex": 0.3569698929786682
+        },
+        "SO2": {
+          "r2": -0.053905367851257324,
+          "rmse_dex": 0.47100135684013367,
+          "mae_dex": 0.32542726397514343
+        },
+        "NH3": {
+          "r2": 0.1543148159980774,
+          "rmse_dex": 0.42907172441482544,
+          "mae_dex": 0.2923179566860199
+        },
+        "C2H6": {
+          "r2": 0.01510852575302124,
+          "rmse_dex": 0.6237897276878357,
+          "mae_dex": 0.4533357620239258
+        },
+        "NO2": {
+          "r2": -0.05083668231964111,
+          "rmse_dex": 0.47255808115005493,
+          "mae_dex": 0.3252938985824585
+        }
+      },
+      "r2_covered": 0.07673513889312744,
+      "r2_all12": 0.020972291007637978,
+      "rmse_all12_dex": 0.45396196842193604,
+      "mae_all12_dex": 0.31107649207115173,
+      "covered_species": [
+        "H2O",
+        "CO2",
+        "O2",
+        "CH4",
+        "O3"
+      ]
+    }
+  },
+  "generated_at": "2026-07-09T13:39:12"
+}

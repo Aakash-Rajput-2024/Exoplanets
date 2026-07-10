@@ -1,0 +1,145 @@
+{
+  "section": "B",
+  "suite": "baselines",
+  "title": "Classical baselines (PriorMean / Ridge / RandomForest)",
+  "track": "optimized1dcnn",
+  "status": "ok",
+  "epistemic": "Ground truth: exact. The linear/prior information floor the neural net must beat.",
+  "headline": {
+    "neural_all12_R2@a1": 0.06677783280611038,
+    "Ridge_floor_R2": 0.030993184074759483,
+    "beats_linear_floor": true
+  },
+  "tables": [
+    {
+      "name": "Overall R\u00b2(log10), all-12, same observable & \u03b1",
+      "columns": [
+        "model",
+        "R\u00b2(log10)",
+        "note"
+      ],
+      "rows": [
+        [
+          "PriorMean",
+          -0.059152036905288696,
+          "no-information reference (R\u00b2\u22480 line)"
+        ],
+        [
+          "Ridge",
+          0.030993184074759483,
+          "linear information floor"
+        ],
+        [
+          "RandomForest",
+          0.012963672168552876,
+          "capacity-limited nonlinear ref"
+        ],
+        [
+          "THIS: optimized1dcnn (\u03b1=1)",
+          0.06677783280611038,
+          "neural, same observable/\u03b1"
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "Baselines are TRACK-INDEPENDENT (classical fits on the same cache); the neural row is this track at \u03b1=1. For the rigorous paired-bootstrap-significant comparison at \u03b1*, see VALIDATION_PLAN A3."
+  ],
+  "artifacts": [],
+  "provenance": {
+    "epochs_run": 48,
+    "epochs_planned": 50,
+    "best_epoch": 48,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "unknown",
+    "config_hash": "7c0676e6538c"
+  },
+  "data": {
+    "baselines": {
+      "PriorMean": -0.059152036905288696,
+      "Ridge": 0.030993184074759483,
+      "RandomForest": 0.012963672168552876
+    },
+    "neural_alpha1": {
+      "per_species": {
+        "H2O": {
+          "r2": 0.07277649641036987,
+          "rmse_dex": 0.43512916564941406,
+          "mae_dex": 0.2952478528022766
+        },
+        "CO2": {
+          "r2": 0.06239187717437744,
+          "rmse_dex": 0.35545966029167175,
+          "mae_dex": 0.22685816884040833
+        },
+        "O2": {
+          "r2": 0.12003916501998901,
+          "rmse_dex": 0.3629950284957886,
+          "mae_dex": 0.23044708371162415
+        },
+        "N2": {
+          "r2": -0.06522798538208008,
+          "rmse_dex": 0.3919379413127899,
+          "mae_dex": 0.24741636216640472
+        },
+        "CH4": {
+          "r2": 0.11292624473571777,
+          "rmse_dex": 0.4196572005748749,
+          "mae_dex": 0.2902531921863556
+        },
+        "N2O": {
+          "r2": 0.038195788860321045,
+          "rmse_dex": 0.43550142645835876,
+          "mae_dex": 0.29698893427848816
+        },
+        "CO": {
+          "r2": -0.05714821815490723,
+          "rmse_dex": 0.473440557718277,
+          "mae_dex": 0.3253849744796753
+        },
+        "O3": {
+          "r2": 0.3086286783218384,
+          "rmse_dex": 0.48705989122390747,
+          "mae_dex": 0.34921708703041077
+        },
+        "SO2": {
+          "r2": -0.04526960849761963,
+          "rmse_dex": 0.46906769275665283,
+          "mae_dex": 0.324887216091156
+        },
+        "NH3": {
+          "r2": 0.24390214681625366,
+          "rmse_dex": 0.4057089388370514,
+          "mae_dex": 0.2751270830631256
+        },
+        "C2H6": {
+          "r2": 0.052101314067840576,
+          "rmse_dex": 0.6119627952575684,
+          "mae_dex": 0.4443400204181671
+        },
+        "NO2": {
+          "r2": -0.04198193550109863,
+          "rmse_dex": 0.4705629050731659,
+          "mae_dex": 0.32410672307014465
+        }
+      },
+      "r2_covered": 0.1353524923324585,
+      "r2_all12": 0.06677783280611038,
+      "rmse_all12_dex": 0.44320690631866455,
+      "mae_all12_dex": 0.3025228977203369,
+      "covered_species": [
+        "H2O",
+        "CO2",
+        "O2",
+        "CH4",
+        "O3"
+      ]
+    }
+  },
+  "generated_at": "2026-07-09T22:17:53"
+}

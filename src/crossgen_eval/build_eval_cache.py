@@ -22,7 +22,9 @@ import argparse
 import numpy as np
 
 # Make sibling modules importable whether run as a module or a script.
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _THIS_DIR)                          # inara_grid, sampler, observable
+sys.path.insert(0, os.path.dirname(_THIS_DIR))          # src/  -> evaluation.engines.*
 
 from inara_grid import load_inara_grid
 from sampler import sample_planets, composition_to_target_vector, TAUREX_SPECIES
@@ -36,9 +38,9 @@ def build(engine, feature_mode, n, out, seed=0):
     planets = sample_planets(n, seed=seed)
 
     if engine == "taurex":
-        from engines.taurex_engine import generate_planet_shape, stellar_continuum_shape
+        from evaluation.engines.taurex_engine import generate_planet_shape, stellar_continuum_shape
     elif engine == "prt":
-        from engines.prt_engine import generate_planet_shape, stellar_continuum_shape
+        from evaluation.engines.prt_engine import generate_planet_shape, stellar_continuum_shape
     else:
         raise ValueError(f"unknown engine {engine}")
 

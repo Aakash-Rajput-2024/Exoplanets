@@ -1,0 +1,850 @@
+{
+  "section": "E",
+  "suite": "solar_system",
+  "title": "Solar-System-as-exoplanet (known composition)",
+  "track": "transformerarch_grey",
+  "status": "ok",
+  "epistemic": "Ground truth: LITERAL (known VMRs). The gold-standard real-target accuracy test.",
+  "headline": {
+    "dominant-gas correct (terrestrial)": "2/4",
+    "mean dex-err covered (terrestrial)": 1.6018940426793429
+  },
+  "tables": [
+    {
+      "name": "Per-target recovery (noiseless reference)",
+      "columns": [
+        "target",
+        "dominant true",
+        "dominant pred",
+        "dom\u2713",
+        "mean dex-err (covered)",
+        "ordering \u03c1"
+      ],
+      "rows": [
+        [
+          "Earth",
+          "N2",
+          "N2",
+          "\u2713",
+          2.18,
+          0.65
+        ],
+        [
+          "Mars",
+          "CO2",
+          "N2",
+          "\u2717",
+          1.09,
+          0.57
+        ],
+        [
+          "Venus",
+          "CO2",
+          "N2",
+          "\u2717",
+          1.98,
+          0.41
+        ],
+        [
+          "Titan",
+          "N2",
+          "N2",
+          "\u2713",
+          1.15,
+          0.23
+        ],
+        [
+          "Jupiter (giant/honesty)",
+          "CH4",
+          "N2",
+          "\u2717",
+          1.39,
+          -0.15
+        ],
+        [
+          "Saturn (giant/honesty)",
+          "CH4",
+          "N2",
+          "\u2717",
+          1.58,
+          -0.15
+        ],
+        [
+          "Uranus (giant/honesty)",
+          "CH4",
+          "N2",
+          "\u2717",
+          0.84,
+          0.1
+        ],
+        [
+          "Neptune (giant/honesty)",
+          "CH4",
+          "N2",
+          "\u2717",
+          1.02,
+          0.1
+        ]
+      ]
+    },
+    {
+      "name": "Honesty probe \u2014 giants must NOT show high O2/O3",
+      "columns": [
+        "giant",
+        "pred O2+O3",
+        "verdict"
+      ],
+      "rows": [
+        [
+          "Jupiter",
+          0.235,
+          "\u26a0 fabricated O2/O3"
+        ],
+        [
+          "Saturn",
+          0.2375,
+          "\u26a0 fabricated O2/O3"
+        ],
+        [
+          "Uranus",
+          0.2476,
+          "\u26a0 fabricated O2/O3"
+        ],
+        [
+          "Neptune",
+          0.2473,
+          "\u26a0 fabricated O2/O3"
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "Spectra are BAND-TEMPLATE PROXIES (reflected_engine), not line-by-line RT \u2014 this tests whether the model responds to which gases are present, not absolute fidelity. For RT fidelity, generate a pRT/TauREx solar-system cache and score it via Section C.",
+    "Giants are outside the 12-simplex (H2/He dominate) \u2014 they are an honesty probe, not an accuracy test.",
+    "INARA's training LABEL distribution samples thick exotic atmospheres, so Earth-like ppb trace gases are out-of-distribution; read the MAJOR/covered gases."
+  ],
+  "artifacts": [
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Earth.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Mars.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Venus.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Titan.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Jupiter.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Saturn.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Uranus.png",
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/transformerarch_grey/solar_system/truth_Neptune.png"
+  ],
+  "provenance": {
+    "epochs_run": 10,
+    "epochs_planned": 10,
+    "best_epoch": 10,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "aad036b02b155f754cc205a7869d10d5af2be803-dirty",
+    "config_hash": "b6a615ccc097"
+  },
+  "data": {
+    "per_target": {
+      "Earth": {
+        "representable": true,
+        "summary": {
+          "dominant_true": "N2",
+          "dominant_pred": "N2",
+          "dominant_correct": true,
+          "spearman_ordering": 0.6549079545282901,
+          "mean_dex_error_covered": 2.1842592831161296,
+          "mean_dex_error_all": 4.611068273381644,
+          "per_species": {
+            "H2O": {
+              "true": 0.01,
+              "pred": 0.003529865760356188,
+              "dex_error": 0.45224181037566247,
+              "covered": true
+            },
+            "CO2": {
+              "true": 0.00042,
+              "pred": 0.08616434037685394,
+              "dex_error": 2.3120782772624917,
+              "covered": true
+            },
+            "O2": {
+              "true": 0.2095,
+              "pred": 0.2174856811761856,
+              "dex_error": 0.016246641846387577,
+              "covered": true
+            },
+            "N2": {
+              "true": 0.7808,
+              "pred": 0.4858127236366272,
+              "dex_error": 0.2060709196880524,
+              "covered": false
+            },
+            "CH4": {
+              "true": 1.9e-06,
+              "pred": 0.16925938427448273,
+              "dex_error": 4.9497991557286785,
+              "covered": true
+            },
+            "N2O": {
+              "true": 3.3e-07,
+              "pred": 0.010711193084716797,
+              "dex_error": 4.511323908288269,
+              "covered": false
+            },
+            "CO": {
+              "true": 1.2e-07,
+              "pred": 0.01050600130110979,
+              "dex_error": 4.942256204204423,
+              "covered": false
+            },
+            "O3": {
+              "true": 7e-07,
+              "pred": 0.0010864970972761512,
+              "dex_error": 3.1909305303674276,
+              "covered": true
+            },
+            "SO2": {
+              "true": 1e-12,
+              "pred": 0.011056666262447834,
+              "dex_error": 10.04362420092252,
+              "covered": false
+            },
+            "NH3": {
+              "true": 1e-12,
+              "pred": 0.0037024032790213823,
+              "dex_error": 9.568483721903316,
+              "covered": false
+            },
+            "C2H6": {
+              "true": 1e-12,
+              "pred": 0.0006832418730482459,
+              "dex_error": 8.83457447459625,
+              "covered": false
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.0192469492030796e-06,
+              "dex_error": 6.305189435396244,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.21857218444347382,
+        "note": "Ar 0.0093 excluded (not a target). O3 is a column-effective value; tropospheric O3 ~3e-8."
+      },
+      "Mars": {
+        "representable": true,
+        "summary": {
+          "dominant_true": "CO2",
+          "dominant_pred": "N2",
+          "dominant_correct": false,
+          "spearman_ordering": 0.5692537774844345,
+          "mean_dex_error_covered": 1.093529073552604,
+          "mean_dex_error_all": 6.004517816369269,
+          "per_species": {
+            "H2O": {
+              "true": 0.0003,
+              "pred": 0.0030985071789473295,
+              "dex_error": 1.014031251986335,
+              "covered": true
+            },
+            "CO2": {
+              "true": 0.9532,
+              "pred": 0.08072052896022797,
+              "dex_error": 1.0722000345120228,
+              "covered": true
+            },
+            "O2": {
+              "true": 0.0013,
+              "pred": 0.21296831965446472,
+              "dex_error": 2.214371651965055,
+              "covered": false
+            },
+            "N2": {
+              "true": 0.027,
+              "pred": 0.4956635534763336,
+              "dex_error": 1.2638232219117065,
+              "covered": false
+            },
+            "CH4": {
+              "true": 1e-12,
+              "pred": 0.16729004681110382,
+              "dex_error": 11.223470102686226,
+              "covered": false
+            },
+            "N2O": {
+              "true": 1e-12,
+              "pred": 0.011502745561301708,
+              "dex_error": 10.06080151338043,
+              "covered": false
+            },
+            "CO": {
+              "true": 0.0007,
+              "pred": 0.010951004922389984,
+              "dex_error": 1.1943559341594536,
+              "covered": true
+            },
+            "O3": {
+              "true": 1e-12,
+              "pred": 0.0011949323816224933,
+              "dex_error": 9.077343330289098,
+              "covered": false
+            },
+            "SO2": {
+              "true": 1e-12,
+              "pred": 0.011398138478398323,
+              "dex_error": 10.056833929005501,
+              "covered": false
+            },
+            "NH3": {
+              "true": 1e-12,
+              "pred": 0.004527806770056486,
+              "dex_error": 9.655887884503349,
+              "covered": false
+            },
+            "C2H6": {
+              "true": 1e-12,
+              "pred": 0.0006819550762884319,
+              "dex_error": 8.833755766500115,
+              "covered": false
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.439715444779722e-06,
+              "dex_error": 6.387339175531935,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.21416325867176056,
+        "note": "Ar 0.016 excluded (not a target)."
+      },
+      "Venus": {
+        "representable": true,
+        "summary": {
+          "dominant_true": "CO2",
+          "dominant_pred": "N2",
+          "dominant_correct": false,
+          "spearman_ordering": 0.4132938384476031,
+          "mean_dex_error_covered": 1.9836281148942372,
+          "mean_dex_error_all": 6.296046471591029,
+          "per_species": {
+            "H2O": {
+              "true": 2e-05,
+              "pred": 0.0037218271754682064,
+              "dex_error": 2.269726206961204,
+              "covered": true
+            },
+            "CO2": {
+              "true": 0.965,
+              "pred": 0.09565772861242294,
+              "dex_error": 1.0038072489843317,
+              "covered": true
+            },
+            "O2": {
+              "true": 1e-12,
+              "pred": 0.20471349358558655,
+              "dex_error": 11.311146469905404,
+              "covered": false
+            },
+            "N2": {
+              "true": 0.035,
+              "pred": 0.49232715368270874,
+              "dex_error": 1.148185745047002,
+              "covered": false
+            },
+            "CH4": {
+              "true": 1e-12,
+              "pred": 0.16545800864696503,
+              "dex_error": 11.218687793115743,
+              "covered": false
+            },
+            "N2O": {
+              "true": 1e-12,
+              "pred": 0.010916647501289845,
+              "dex_error": 10.038089287157021,
+              "covered": false
+            },
+            "CO": {
+              "true": 1.7e-05,
+              "pred": 0.010520988143980503,
+              "dex_error": 2.791607609820102,
+              "covered": true
+            },
+            "O3": {
+              "true": 1e-12,
+              "pred": 0.0010162361431866884,
+              "dex_error": 9.006994636851978,
+              "covered": false
+            },
+            "SO2": {
+              "true": 0.00015,
+              "pred": 0.011103570461273193,
+              "dex_error": 1.8693713938113108,
+              "covered": true
+            },
+            "NH3": {
+              "true": 1e-12,
+              "pred": 0.0038882058579474688,
+              "dex_error": 9.589749250236725,
+              "covered": false
+            },
+            "C2H6": {
+              "true": 1e-12,
+              "pred": 0.0006731261382810771,
+              "dex_error": 8.828096455050632,
+              "covered": false
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.9998225272720447e-06,
+              "dex_error": 6.477095562150887,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.20572972297668457,
+        "note": "Above-cloud abundances; deep atmosphere differs. Thick H2SO4 cloud deck."
+      },
+      "Titan": {
+        "representable": true,
+        "summary": {
+          "dominant_true": "N2",
+          "dominant_pred": "N2",
+          "dominant_correct": true,
+          "spearman_ordering": 0.2329857319924426,
+          "mean_dex_error_covered": 1.1461596991544014,
+          "mean_dex_error_all": 7.179439827716924,
+          "per_species": {
+            "H2O": {
+              "true": 1e-09,
+              "pred": 0.0014973471406847239,
+              "dex_error": 6.175322497608541,
+              "covered": false
+            },
+            "CO2": {
+              "true": 1e-12,
+              "pred": 0.11048002541065216,
+              "dex_error": 11.043283765459286,
+              "covered": false
+            },
+            "O2": {
+              "true": 1e-12,
+              "pred": 0.2481427788734436,
+              "dex_error": 11.394701641447316,
+              "covered": false
+            },
+            "N2": {
+              "true": 0.95,
+              "pred": 0.44744712114334106,
+              "dex_error": 0.32698188709522547,
+              "covered": false
+            },
+            "CH4": {
+              "true": 0.049,
+              "pred": 0.1565389782190323,
+              "dex_error": 0.5044264146828693,
+              "covered": true
+            },
+            "N2O": {
+              "true": 1e-12,
+              "pred": 0.010624390095472336,
+              "dex_error": 10.026304008296606,
+              "covered": false
+            },
+            "CO": {
+              "true": 1e-12,
+              "pred": 0.010179396718740463,
+              "dex_error": 10.007722040330243,
+              "covered": false
+            },
+            "O3": {
+              "true": 1e-12,
+              "pred": 0.0011816417099907994,
+              "dex_error": 9.072485812448727,
+              "covered": false
+            },
+            "SO2": {
+              "true": 1e-12,
+              "pred": 0.01074321661144495,
+              "dex_error": 10.031134332336505,
+              "covered": false
+            },
+            "NH3": {
+              "true": 1e-12,
+              "pred": 0.0025490352418273687,
+              "dex_error": 9.406375839873094,
+              "covered": false
+            },
+            "C2H6": {
+              "true": 1e-05,
+              "pred": 0.0006136107840575278,
+              "dex_error": 1.7878929836259334,
+              "covered": true
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.3803822841728106e-06,
+              "dex_error": 6.376646709398747,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.24932442605495453,
+        "note": "H2 ~0.001 excluded. Organic haze; CH4 surface value."
+      },
+      "Jupiter": {
+        "representable": false,
+        "summary": {
+          "dominant_true": "CH4",
+          "dominant_pred": "N2",
+          "dominant_correct": false,
+          "spearman_ordering": -0.14561608249527663,
+          "mean_dex_error_covered": 1.3927121943808745,
+          "mean_dex_error_all": 7.153427528243793,
+          "per_species": {
+            "H2O": {
+              "true": 0.0001,
+              "pred": 0.0024734721519052982,
+              "dex_error": 1.3933070251340212,
+              "covered": true
+            },
+            "CO2": {
+              "true": 1e-12,
+              "pred": 0.07961752265691757,
+              "dex_error": 10.901008660146235,
+              "covered": false
+            },
+            "O2": {
+              "true": 1e-12,
+              "pred": 0.23380108177661896,
+              "dex_error": 11.368846516272054,
+              "covered": false
+            },
+            "N2": {
+              "true": 1e-12,
+              "pred": 0.4804937541484833,
+              "dex_error": 11.681687746725734,
+              "covered": false
+            },
+            "CH4": {
+              "true": 0.002,
+              "pred": 0.16460126638412476,
+              "dex_error": 1.9154031765337867,
+              "covered": true
+            },
+            "N2O": {
+              "true": 1e-12,
+              "pred": 0.010891449637711048,
+              "dex_error": 10.037085687630832,
+              "covered": false
+            },
+            "CO": {
+              "true": 1e-12,
+              "pred": 0.010734201408922672,
+              "dex_error": 10.03076973982032,
+              "covered": false
+            },
+            "O3": {
+              "true": 1e-12,
+              "pred": 0.0012376239756122231,
+              "dex_error": 9.092588714052035,
+              "covered": false
+            },
+            "SO2": {
+              "true": 1e-12,
+              "pred": 0.011265082284808159,
+              "dex_error": 10.05173436833749,
+              "covered": false
+            },
+            "NH3": {
+              "true": 0.00057,
+              "pred": 0.004219891037791967,
+              "dex_error": 0.8694263814748155,
+              "covered": true
+            },
+            "C2H6": {
+              "true": 5e-06,
+              "pred": 0.0006622271612286568,
+              "dex_error": 2.1220369850214658,
+              "covered": false
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.383610762990429e-06,
+              "dex_error": 6.377235337776746,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.23503871262073517,
+        "note": "H2 ~0.90 / He ~0.10 dominate (not targets) -> UNREPRESENTABLE in the 12-simplex; honesty probe only. CH4 is the dominant TARGET species."
+      },
+      "Saturn": {
+        "representable": false,
+        "summary": {
+          "dominant_true": "CH4",
+          "dominant_pred": "N2",
+          "dominant_correct": false,
+          "spearman_ordering": -0.14561608249527663,
+          "mean_dex_error_covered": 1.578701116060568,
+          "mean_dex_error_all": 7.2532893066438575,
+          "per_species": {
+            "H2O": {
+              "true": 1e-05,
+              "pred": 0.002259983215481043,
+              "dex_error": 2.35410521372659,
+              "covered": false
+            },
+            "CO2": {
+              "true": 1e-12,
+              "pred": 0.08324220776557922,
+              "dex_error": 10.920343590132733,
+              "covered": false
+            },
+            "O2": {
+              "true": 1e-12,
+              "pred": 0.23628492653369904,
+              "dex_error": 11.373436017307188,
+              "covered": false
+            },
+            "N2": {
+              "true": 1e-12,
+              "pred": 0.4759432375431061,
+              "dex_error": 11.677555160510904,
+              "covered": false
+            },
+            "CH4": {
+              "true": 0.0045,
+              "pred": 0.16370905935764313,
+              "dex_error": 1.5608601993578561,
+              "covered": true
+            },
+            "N2O": {
+              "true": 1e-12,
+              "pred": 0.01086267177015543,
+              "dex_error": 10.035936656958757,
+              "covered": false
+            },
+            "CO": {
+              "true": 1e-12,
+              "pred": 0.010657470673322678,
+              "dex_error": 10.027654146251692,
+              "covered": false
+            },
+            "O3": {
+              "true": 1e-12,
+              "pred": 0.0012320374371483922,
+              "dex_error": 9.090623904662774,
+              "covered": false
+            },
+            "SO2": {
+              "true": 1e-12,
+              "pred": 0.011200557462871075,
+              "dex_error": 10.04923963847588,
+              "covered": false
+            },
+            "NH3": {
+              "true": 0.0001,
+              "pred": 0.003949499223381281,
+              "dex_error": 1.5965420327632796,
+              "covered": true
+            },
+            "C2H6": {
+              "true": 7e-06,
+              "pred": 0.0006559800240211189,
+              "dex_error": 1.971792574377424,
+              "covered": false
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.4064815988822374e-06,
+              "dex_error": 6.38138254520122,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.23751696944236755,
+        "note": "H2 ~0.96 / He ~0.03 dominate (not targets) -> honesty probe only."
+      },
+      "Uranus": {
+        "representable": false,
+        "summary": {
+          "dominant_true": "CH4",
+          "dominant_pred": "N2",
+          "dominant_correct": false,
+          "spearman_ordering": 0.09676021025275898,
+          "mean_dex_error_covered": 0.8355854243051878,
+          "mean_dex_error_all": 8.73664036860202,
+          "per_species": {
+            "H2O": {
+              "true": 1e-09,
+              "pred": 0.0015367568703368306,
+              "dex_error": 6.186605163385675,
+              "covered": false
+            },
+            "CO2": {
+              "true": 1e-12,
+              "pred": 0.10752888768911362,
+              "dex_error": 11.031525153355002,
+              "covered": false
+            },
+            "O2": {
+              "true": 1e-12,
+              "pred": 0.24640204012393951,
+              "dex_error": 11.391644299315852,
+              "covered": false
+            },
+            "N2": {
+              "true": 1e-12,
+              "pred": 0.45087534189224243,
+              "dex_error": 11.65405648464576,
+              "covered": false
+            },
+            "CH4": {
+              "true": 0.023,
+              "pred": 0.1575118601322174,
+              "dex_error": 0.8355854243051878,
+              "covered": true
+            },
+            "N2O": {
+              "true": 1e-12,
+              "pred": 0.01065035816282034,
+              "dex_error": 10.027364212987996,
+              "covered": false
+            },
+            "CO": {
+              "true": 1e-12,
+              "pred": 0.01022204291075468,
+              "dex_error": 10.009537699732586,
+              "covered": false
+            },
+            "O3": {
+              "true": 1e-12,
+              "pred": 0.0011842034291476011,
+              "dex_error": 9.073426314352572,
+              "covered": false
+            },
+            "SO2": {
+              "true": 1e-12,
+              "pred": 0.010787095874547958,
+              "dex_error": 10.032904538712476,
+              "covered": false
+            },
+            "NH3": {
+              "true": 1e-12,
+              "pred": 0.002680398290976882,
+              "dex_error": 9.428199332357615,
+              "covered": false
+            },
+            "C2H6": {
+              "true": 1e-12,
+              "pred": 0.0006186194368638098,
+              "dex_error": 8.791423561302603,
+              "covered": false
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.384581875958247e-06,
+              "dex_error": 6.377412238770894,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.24758625030517578,
+        "note": "H2 ~0.83 / He ~0.15 dominate (not targets) -> honesty probe only."
+      },
+      "Neptune": {
+        "representable": false,
+        "summary": {
+          "dominant_true": "CH4",
+          "dominant_pred": "N2",
+          "dominant_correct": false,
+          "spearman_ordering": 0.09676021025275898,
+          "mean_dex_error_covered": 1.021511436042279,
+          "mean_dex_error_all": 8.75252312418831,
+          "per_species": {
+            "H2O": {
+              "true": 1e-09,
+              "pred": 0.0015398365212604403,
+              "dex_error": 6.187474615847399,
+              "covered": false
+            },
+            "CO2": {
+              "true": 1e-12,
+              "pred": 0.10725685954093933,
+              "dex_error": 11.030425076758993,
+              "covered": false
+            },
+            "O2": {
+              "true": 1e-12,
+              "pred": 0.24613483250141144,
+              "dex_error": 11.391173078524796,
+              "covered": false
+            },
+            "N2": {
+              "true": 1e-12,
+              "pred": 0.45127421617507935,
+              "dex_error": 11.654440520551445,
+              "covered": false
+            },
+            "CH4": {
+              "true": 0.015,
+              "pred": 0.15761686861515045,
+              "dex_error": 1.021511436042279,
+              "covered": true
+            },
+            "N2O": {
+              "true": 1e-12,
+              "pred": 0.010656360536813736,
+              "dex_error": 10.027608905566835,
+              "covered": false
+            },
+            "CO": {
+              "true": 1e-12,
+              "pred": 0.010227644816040993,
+              "dex_error": 10.009775637509177,
+              "covered": false
+            },
+            "O3": {
+              "true": 1e-12,
+              "pred": 0.0011843058746308088,
+              "dex_error": 9.073463883559507,
+              "covered": false
+            },
+            "SO2": {
+              "true": 1e-12,
+              "pred": 0.01079348661005497,
+              "dex_error": 10.033161757093778,
+              "covered": false
+            },
+            "NH3": {
+              "true": 1e-12,
+              "pred": 0.0026940826792269945,
+              "dex_error": 9.430410919739256,
+              "covered": false
+            },
+            "C2H6": {
+              "true": 1e-12,
+              "pred": 0.0006192041328176856,
+              "dex_error": 8.791833846340737,
+              "covered": false
+            },
+            "NO2": {
+              "true": 1e-12,
+              "pred": 2.393303702774574e-06,
+              "dex_error": 6.378997812725497,
+              "covered": false
+            }
+          }
+        },
+        "o2_plus_o3_pred": 0.24731913208961487,
+        "note": "H2 ~0.80 / He ~0.19 dominate (not targets) -> honesty probe only."
+      }
+    }
+  },
+  "generated_at": "2026-07-09T13:41:34"
+}

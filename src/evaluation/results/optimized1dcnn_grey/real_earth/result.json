@@ -1,0 +1,247 @@
+{
+  "section": "F",
+  "suite": "real_earth",
+  "title": "Real disk-integrated Earth (VPL Robinson 2011)",
+  "track": "optimized1dcnn_grey",
+  "status": "ok",
+  "epistemic": "Ground truth: LITERAL, on REAL photons. The strongest single real test.",
+  "headline": {
+    "dominant true": "N2",
+    "dominant pred": "O2",
+    "dominant correct": false,
+    "mean dex-err (covered)": 2.0517275479416592,
+    "ordering \u03c1": 0.8720241785838646
+  },
+  "tables": [
+    {
+      "name": "Earth composition: truth vs predicted",
+      "columns": [
+        "species",
+        "Earth VMR",
+        "pred (noiseless)",
+        "pred (\u03b1=1)",
+        "covered"
+      ],
+      "rows": [
+        [
+          "H2O",
+          "1.00e-02",
+          "2.33e-02",
+          "3.33e-02",
+          "yes"
+        ],
+        [
+          "CO2",
+          "4.20e-04",
+          "3.33e-02",
+          "3.00e-01",
+          "yes"
+        ],
+        [
+          "O2",
+          "2.09e-01",
+          "7.00e-01",
+          "3.17e-01",
+          "yes"
+        ],
+        [
+          "N2",
+          "7.81e-01",
+          "2.08e-01",
+          "2.93e-01",
+          "-"
+        ],
+        [
+          "CH4",
+          "1.90e-06",
+          "7.40e-03",
+          "3.26e-02",
+          "yes"
+        ],
+        [
+          "N2O",
+          "3.30e-07",
+          "4.59e-03",
+          "6.55e-03",
+          "-"
+        ],
+        [
+          "CO",
+          "1.20e-07",
+          "6.76e-03",
+          "6.37e-03",
+          "-"
+        ],
+        [
+          "O3",
+          "7.00e-07",
+          "5.28e-03",
+          "1.18e-03",
+          "yes"
+        ],
+        [
+          "SO2",
+          "1.00e-12",
+          "6.83e-03",
+          "6.30e-03",
+          "-"
+        ],
+        [
+          "NH3",
+          "1.00e-12",
+          "4.33e-03",
+          "3.63e-03",
+          "-"
+        ],
+        [
+          "C2H6",
+          "1.00e-12",
+          "2.72e-05",
+          "1.26e-04",
+          "-"
+        ],
+        [
+          "NO2",
+          "1.00e-12",
+          "5.85e-06",
+          "6.56e-06",
+          "-"
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "REAL Robinson 2011 VPL spectrum (units W/m\u00b2/\u00b5m/sr) regridded onto the INARA grid and median-matched to INARA before the INARA-fit norm \u2014 the observable/units are adapted, not identical to INARA.",
+    "INARA labels sample thick exotic atmospheres, so Earth's ppm/ppb trace gases (CH4, N2O, O3...) are out-of-distribution; both models over-predict them. Read the MAJOR gases (N2, O2, H2O, CO2).",
+    "Single target \u2192 qualitative read, no R\u00b2. Extensible to EPOXI/Galileo files dropped into data/real_earth/ with the same loader."
+  ],
+  "artifacts": [
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/optimized1dcnn_grey/real_earth/truth_bars_Earth-VPL.png"
+  ],
+  "provenance": {
+    "epochs_run": 49,
+    "epochs_planned": 50,
+    "best_epoch": 49,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "741b2672c15b569ca5728e540cebe0860d95ac45-dirty",
+    "config_hash": "795975bd7d08"
+  },
+  "data": {
+    "summary": {
+      "dominant_true": "N2",
+      "dominant_pred": "O2",
+      "dominant_correct": false,
+      "spearman_ordering": 0.8720241785838646,
+      "mean_dex_error_covered": 2.0517275479416592,
+      "mean_dex_error_all": 4.4499571567447065,
+      "per_species": {
+        "H2O": {
+          "true": 0.01,
+          "pred": 0.023298518732190132,
+          "dex_error": 0.3673283104300702,
+          "covered": true
+        },
+        "CO2": {
+          "true": 0.00042,
+          "pred": 0.03332692012190819,
+          "dex_error": 1.8995458901734106,
+          "covered": true
+        },
+        "O2": {
+          "true": 0.2095,
+          "pred": 0.6997639536857605,
+          "dex_error": 0.5237675399978117,
+          "covered": true
+        },
+        "N2": {
+          "true": 0.7808,
+          "pred": 0.20837929844856262,
+          "dex_error": 0.5736852331027789,
+          "covered": false
+        },
+        "CH4": {
+          "true": 1.9e-06,
+          "pred": 0.007401253096759319,
+          "dex_error": 3.5905516548504792,
+          "covered": true
+        },
+        "N2O": {
+          "true": 3.3e-07,
+          "pred": 0.0045927539467811584,
+          "dex_error": 4.1435592391743485,
+          "covered": false
+        },
+        "CO": {
+          "true": 1.2e-07,
+          "pred": 0.0067599499598145485,
+          "dex_error": 4.750762235063116,
+          "covered": false
+        },
+        "O3": {
+          "true": 7e-07,
+          "pred": 0.00527888722717762,
+          "dex_error": 3.877444344256524,
+          "covered": true
+        },
+        "SO2": {
+          "true": 1e-12,
+          "pred": 0.006831065285950899,
+          "dex_error": 9.834488435999823,
+          "covered": false
+        },
+        "NH3": {
+          "true": 1e-12,
+          "pred": 0.004334323573857546,
+          "dex_error": 9.636921329940716,
+          "covered": false
+        },
+        "C2H6": {
+          "true": 1e-12,
+          "pred": 2.7172784029971808e-05,
+          "dex_error": 7.434134137016071,
+          "covered": false
+        },
+        "NO2": {
+          "true": 1e-12,
+          "pred": 5.8519085541774984e-06,
+          "dex_error": 6.767297530931331,
+          "covered": false
+        }
+      }
+    },
+    "pred_noiseless": [
+      0.023298518732190132,
+      0.03332692012190819,
+      0.6997639536857605,
+      0.20837929844856262,
+      0.007401253096759319,
+      0.0045927539467811584,
+      0.0067599499598145485,
+      0.00527888722717762,
+      0.006831065285950899,
+      0.004334323573857546,
+      2.7172784029971808e-05,
+      5.8519085541774984e-06
+    ],
+    "pred_alpha1": [
+      0.03326866403222084,
+      0.29980334639549255,
+      0.31696340441703796,
+      0.2932059168815613,
+      0.032608360052108765,
+      0.006546385120600462,
+      0.0063661839812994,
+      0.0011815676698461175,
+      0.0062978616915643215,
+      0.0036255535669624805,
+      0.00012623603106476367,
+      6.557359938597074e-06
+    ]
+  },
+  "generated_at": "2026-07-09T22:22:05"
+}

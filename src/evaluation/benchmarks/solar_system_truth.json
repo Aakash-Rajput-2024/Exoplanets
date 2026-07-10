@@ -1,0 +1,86 @@
+{
+  "_README": "Known disk-averaged atmospheric composition (volume mixing ratios) of Solar-System bodies, used as LITERAL GROUND TRUTH for the reflected-light retrieval model observed 'as an exoplanet'. VMRs are over the model's 12 target species; species absent/negligible are floored to 1e-12 at load. H2/He/Ar are NOT model targets, so H2/He-dominated giants are flagged representable=false (their true mass sits outside the 12-simplex) and serve as an HONESTY probe: the model must not fabricate high O2/O3. covered_species = which targets a 0.2-2.0um reflected/thermal forward model imprints given available opacities.",
+  "_sources": [
+    "NASA Planetary Fact Sheets, nssdc.gsfc.nasa.gov/planetary/factsheet (Williams, D.R.)",
+    "Lodders, K. & Fegley, B. 1998, The Planetary Scientist's Companion (Oxford)",
+    "de Pater, I. & Lissauer, J.J. 2015, Planetary Sciences, 2nd ed. (Cambridge)",
+    "Earth: NASA Earth Fact Sheet (dry troposphere + typical H2O); CO2 ~420 ppm (2023)",
+    "Titan: Niemann et al. 2005, Nature 438, 779 (Huygens GCMS)"
+  ],
+  "star_sun": {"star_temperature": 5772.0, "star_radius": 1.0, "star_mass": 1.0},
+  "bodies": [
+    {
+      "name": "Earth", "representable": true,
+      "covered_species": ["H2O", "O2", "O3", "CO2", "CH4"],
+      "params": {"planet_radius_km": 6371.0, "planet_mass_earth": 1.0,
+                 "surface_temperature": 288.0, "surface_pressure_bar": 1.013,
+                 "sma": 1.0, "distance_parsec": 10.0},
+      "vmr": {"N2": 0.7808, "O2": 0.2095, "H2O": 0.01, "CO2": 4.2e-4,
+              "CH4": 1.9e-6, "N2O": 3.3e-7, "CO": 1.2e-7, "O3": 7.0e-7},
+      "note": "Ar 0.0093 excluded (not a target). O3 is a column-effective value; tropospheric O3 ~3e-8."
+    },
+    {
+      "name": "Mars", "representable": true,
+      "covered_species": ["CO2", "H2O", "CO"],
+      "params": {"planet_radius_km": 3389.5, "planet_mass_earth": 0.107,
+                 "surface_temperature": 210.0, "surface_pressure_bar": 0.00636,
+                 "sma": 1.524, "distance_parsec": 10.0},
+      "vmr": {"CO2": 0.9532, "N2": 0.027, "O2": 1.3e-3, "CO": 7.0e-4, "H2O": 3.0e-4},
+      "note": "Ar 0.016 excluded (not a target)."
+    },
+    {
+      "name": "Venus", "representable": true,
+      "covered_species": ["CO2", "H2O", "CO", "SO2"],
+      "params": {"planet_radius_km": 6051.8, "planet_mass_earth": 0.815,
+                 "surface_temperature": 737.0, "surface_pressure_bar": 92.0,
+                 "sma": 0.723, "distance_parsec": 10.0},
+      "vmr": {"CO2": 0.965, "N2": 0.035, "SO2": 1.5e-4, "H2O": 2.0e-5, "CO": 1.7e-5},
+      "note": "Above-cloud abundances; deep atmosphere differs. Thick H2SO4 cloud deck."
+    },
+    {
+      "name": "Titan", "representable": true,
+      "covered_species": ["CH4", "C2H6"],
+      "params": {"planet_radius_km": 2574.7, "planet_mass_earth": 0.0225,
+                 "surface_temperature": 94.0, "surface_pressure_bar": 1.47,
+                 "sma": 9.537, "distance_parsec": 10.0},
+      "vmr": {"N2": 0.95, "CH4": 0.049, "C2H6": 1.0e-5, "H2O": 1.0e-9},
+      "note": "H2 ~0.001 excluded. Organic haze; CH4 surface value."
+    },
+    {
+      "name": "Jupiter", "representable": false,
+      "covered_species": ["CH4", "NH3", "H2O"],
+      "params": {"planet_radius_km": 69911.0, "planet_mass_earth": 317.8,
+                 "surface_temperature": 165.0, "surface_pressure_bar": 1.0,
+                 "sma": 5.204, "distance_parsec": 10.0},
+      "vmr": {"CH4": 2.0e-3, "NH3": 5.7e-4, "H2O": 1.0e-4, "C2H6": 5.0e-6},
+      "note": "H2 ~0.90 / He ~0.10 dominate (not targets) -> UNREPRESENTABLE in the 12-simplex; honesty probe only. CH4 is the dominant TARGET species."
+    },
+    {
+      "name": "Saturn", "representable": false,
+      "covered_species": ["CH4", "NH3"],
+      "params": {"planet_radius_km": 58232.0, "planet_mass_earth": 95.2,
+                 "surface_temperature": 134.0, "surface_pressure_bar": 1.0,
+                 "sma": 9.583, "distance_parsec": 10.0},
+      "vmr": {"CH4": 4.5e-3, "NH3": 1.0e-4, "H2O": 1.0e-5, "C2H6": 7.0e-6},
+      "note": "H2 ~0.96 / He ~0.03 dominate (not targets) -> honesty probe only."
+    },
+    {
+      "name": "Uranus", "representable": false,
+      "covered_species": ["CH4"],
+      "params": {"planet_radius_km": 25362.0, "planet_mass_earth": 14.5,
+                 "surface_temperature": 76.0, "surface_pressure_bar": 1.0,
+                 "sma": 19.201, "distance_parsec": 10.0},
+      "vmr": {"CH4": 0.023, "H2O": 1.0e-9},
+      "note": "H2 ~0.83 / He ~0.15 dominate (not targets) -> honesty probe only."
+    },
+    {
+      "name": "Neptune", "representable": false,
+      "covered_species": ["CH4"],
+      "params": {"planet_radius_km": 24622.0, "planet_mass_earth": 17.1,
+                 "surface_temperature": 72.0, "surface_pressure_bar": 1.0,
+                 "sma": 30.07, "distance_parsec": 10.0},
+      "vmr": {"CH4": 0.015, "H2O": 1.0e-9},
+      "note": "H2 ~0.80 / He ~0.19 dominate (not targets) -> honesty probe only."
+    }
+  ]
+}

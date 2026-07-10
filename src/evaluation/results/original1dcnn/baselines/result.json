@@ -1,0 +1,145 @@
+{
+  "section": "B",
+  "suite": "baselines",
+  "title": "Classical baselines (PriorMean / Ridge / RandomForest)",
+  "track": "original1dcnn",
+  "status": "ok",
+  "epistemic": "Ground truth: exact. The linear/prior information floor the neural net must beat.",
+  "headline": {
+    "neural_all12_R2@a1": 0.05412755906581879,
+    "Ridge_floor_R2": 0.030993184074759483,
+    "beats_linear_floor": true
+  },
+  "tables": [
+    {
+      "name": "Overall R\u00b2(log10), all-12, same observable & \u03b1",
+      "columns": [
+        "model",
+        "R\u00b2(log10)",
+        "note"
+      ],
+      "rows": [
+        [
+          "PriorMean",
+          -0.059152036905288696,
+          "no-information reference (R\u00b2\u22480 line)"
+        ],
+        [
+          "Ridge",
+          0.030993184074759483,
+          "linear information floor"
+        ],
+        [
+          "RandomForest",
+          0.012963672168552876,
+          "capacity-limited nonlinear ref"
+        ],
+        [
+          "THIS: original1dcnn (\u03b1=1)",
+          0.05412755906581879,
+          "neural, same observable/\u03b1"
+        ]
+      ]
+    }
+  ],
+  "caveats": [
+    "Baselines are TRACK-INDEPENDENT (classical fits on the same cache); the neural row is this track at \u03b1=1. For the rigorous paired-bootstrap-significant comparison at \u03b1*, see VALIDATION_PLAN A3."
+  ],
+  "artifacts": [],
+  "provenance": {
+    "epochs_run": 10,
+    "epochs_planned": 10,
+    "best_epoch": 10,
+    "batch_size": 64,
+    "loss": "huber",
+    "lr": 0.001,
+    "obs_mode": "contrast_snr",
+    "label_transform": "clr",
+    "input_norm": "per_lambda_asinh",
+    "git_commit": "aad036b02b155f754cc205a7869d10d5af2be803-dirty",
+    "config_hash": "dab61e7f17bd"
+  },
+  "data": {
+    "baselines": {
+      "PriorMean": -0.059152036905288696,
+      "Ridge": 0.030993184074759483,
+      "RandomForest": 0.012963672168552876
+    },
+    "neural_alpha1": {
+      "per_species": {
+        "H2O": {
+          "r2": 0.058375775814056396,
+          "rmse_dex": 0.4384951591491699,
+          "mae_dex": 0.2990563213825226
+        },
+        "CO2": {
+          "r2": 0.025223493576049805,
+          "rmse_dex": 0.3624367117881775,
+          "mae_dex": 0.23461613059043884
+        },
+        "O2": {
+          "r2": 0.10939294099807739,
+          "rmse_dex": 0.3651842772960663,
+          "mae_dex": 0.233123779296875
+        },
+        "N2": {
+          "r2": -0.06043505668640137,
+          "rmse_dex": 0.391055166721344,
+          "mae_dex": 0.24896907806396484
+        },
+        "CH4": {
+          "r2": 0.10459482669830322,
+          "rmse_dex": 0.4216233193874359,
+          "mae_dex": 0.29320722818374634
+        },
+        "N2O": {
+          "r2": -0.043196797370910645,
+          "rmse_dex": 0.4535543918609619,
+          "mae_dex": 0.31328055262565613
+        },
+        "CO": {
+          "r2": -0.059224724769592285,
+          "rmse_dex": 0.4739052951335907,
+          "mae_dex": 0.32587751746177673
+        },
+        "O3": {
+          "r2": 0.3228054642677307,
+          "rmse_dex": 0.4820403754711151,
+          "mae_dex": 0.34624847769737244
+        },
+        "SO2": {
+          "r2": -0.04915285110473633,
+          "rmse_dex": 0.4699382185935974,
+          "mae_dex": 0.32566291093826294
+        },
+        "NH3": {
+          "r2": 0.2402215600013733,
+          "rmse_dex": 0.4066951870918274,
+          "mae_dex": 0.2771912217140198
+        },
+        "C2H6": {
+          "r2": 0.04812568426132202,
+          "rmse_dex": 0.6132447719573975,
+          "mae_dex": 0.4452804625034332
+        },
+        "NO2": {
+          "r2": -0.04719960689544678,
+          "rmse_dex": 0.47173959016799927,
+          "mae_dex": 0.3246747851371765
+        }
+      },
+      "r2_covered": 0.12407849729061127,
+      "r2_all12": 0.05412755906581879,
+      "rmse_all12_dex": 0.44582605361938477,
+      "mae_all12_dex": 0.30559906363487244,
+      "covered_species": [
+        "H2O",
+        "CO2",
+        "O2",
+        "CH4",
+        "O3"
+      ]
+    }
+  },
+  "generated_at": "2026-07-09T22:22:45"
+}

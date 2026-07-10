@@ -69,3 +69,12 @@ notes/
 .idea/
 *.log
 
+
+# --- 3-component restructure cleanup (2026-07-10) ---
+# 8.2 GB of parked archives (moved out of repo root, not deleted)
+/_archive_unused/
+# model/data caches anywhere (was only ignored under /data/) — e.g. decloud/cache/*.pt (1.5 GB)
+*.pt
+**/cache/
+# root run logs (generated)
+/logs/

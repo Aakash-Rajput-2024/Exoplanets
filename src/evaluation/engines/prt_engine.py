@@ -1,14 +1,18 @@
-"""petitRADTRANS reflected-light + scattering backend (the high-fidelity engine).
+"""petitRADTRANS thermal-emission backend (matching INARA's planet-channel physics).
 
-Unlike the TauREx reflected-light *proxy* (Planck continuum x transmission-band
-imprint), pRT computes genuine reflected starlight with multiple scattering plus
-thermal emission via `calculate_flux(..., scattering_in_emission=True)` and real
-PHOENIX stellar irradiation. Same interface as taurex_engine:
+INARA's planet channel is dominated by thermal emission (not reflected starlight).
+An earlier version used `scattering_in_emission=True` which produces reflected-
+light spectra with a spectrally *inverted* contrast shape (high blue / Rayleigh
+vs INARA's high red / thermal) — causing the cross-gen eval to see out-of-
+distribution input and collapse to the prior mean.
+
+Now uses emission-only (`scattering_in_emission=False`) to match the physics that
+the v2 models were trained on. Same interface as taurex_engine:
 generate_planet_shape / stellar_continuum_shape return spectrum SHAPES (arbitrary
 units); absolute scale is fixed downstream by empirical calibration to INARA.
 
 Runs in .venv_prt. The Radtrans object (opacity load is slow) is built once and
-reused across planets. Scattering RT is slow per planet, so use modest N.
+reused across planets.
 """
 import numpy as np
 
@@ -28,7 +32,7 @@ _KB = 1.380649e-16
 
 _WL_MIN, _WL_MAX = 0.3, 2.0   # pRT c-k coverage floor is 0.3 um
 _N_LAYERS = 40
-_ALBEDO = 0.3                 # gray surface reflectance
+
 
 _RT = None
 _PRESSURES_BAR = np.logspace(-6, 1, _N_LAYERS)  # 1e-6 .. 10 bar
@@ -45,7 +49,7 @@ def _get_radtrans():
             rayleigh_species=["N2"],
             gas_continuum_contributors=["N2--N2"],
             line_opacity_mode='c-k',
-            scattering_in_emission=True,
+            scattering_in_emission=False,
         )
     return _RT
 
@@ -66,7 +70,7 @@ def _mass_fractions(comp):
 
 
 def generate_planet_shape(p, wl_grid_um):
-    """Reflected-light + thermal spectrum SHAPE on wl_grid_um (arbitrary units)."""
+    """Thermal-emission spectrum SHAPE on wl_grid_um (arbitrary units)."""
     rt = _get_radtrans()
     nfreq = len(rt.frequencies)
 
@@ -76,19 +80,11 @@ def generate_planet_shape(p, wl_grid_um):
     mass_fractions, mmw = _mass_fractions(p["composition"])
 
     g_cgs = _G * (p["planet_mass_earth"] * _M_EARTH_G) / (p["planet_radius_km"] * 1e5) ** 2
-    reflectances = np.full(nfreq, _ALBEDO)
-
     wl_cm, flux, _ = rt.calculate_flux(
         temperatures=temperatures,
         mass_fractions=mass_fractions,
         mean_molar_masses=np.full(_N_LAYERS, mmw),
         reference_gravity=float(g_cgs),
-        star_effective_temperature=float(p["star_temperature"]),
-        star_radius=float(p["star_radius"] * _R_SUN_CM),
-        orbit_semi_major_axis=float(p["sma"] * _AU_CM),
-        reflectances=reflectances,
-        emissivities=1.0 - reflectances,
-        irradiation_geometry='dayside_ave',
     )
     wl_um = np.asarray(wl_cm) * 1e4
     flux = np.nan_to_num(np.asarray(flux))
