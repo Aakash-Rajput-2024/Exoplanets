@@ -6,7 +6,7 @@ norm/labels). Only the generator is unchanged vs the pRT/TauREx caches — so if
 anchor's covered-species R² collapses, the eval PATH is the confound, not the
 generator, and no cross-gen gap can be trusted until it's fixed.
 
-Requires ``data/cache_v2_psg`` from ``crossgen_eval/build_cache_v2_psg.py`` (offline —
+Requires ``data/cache_v2_psg`` from ``evaluation/crossgen/build_cache_v2_psg.py`` (offline —
 0 PSG API calls; it reuses the real held-out ``data/inara_1by3`` CSVs).
 
 PASS: anchor covered-ref R² ≥ 0.9 × native INARA covered-ref R².
@@ -29,7 +29,7 @@ def applicable(ctx):
         return False, "no checkpoints for this track/seed"
     if not os.path.exists(os.path.join(PSG_CACHE, "test_x.pt")):
         return False, ("data/cache_v2_psg missing; build with "
-                       "`python src/crossgen_eval/build_cache_v2_psg.py` (offline)")
+                       "`python src/evaluation/crossgen/build_cache_v2_psg.py` (offline)")
     return True, ""
 
 

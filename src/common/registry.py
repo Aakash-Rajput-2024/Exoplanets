@@ -71,7 +71,7 @@ MATCHED = dict(
 # --- Track registry: architecture only ---------------------------------------
 TRACKS = {
     "original1dcnn": dict(
-        model_py=f"{SRC}/original1dcnn/model.py", model_cls="NasaInaraModel",
+        model_py=f"{SRC}/models/original1dcnn/model.py", model_cls="NasaInaraModel",
         desc="Paper-baseline 4-conv CNN (36M-param FC head)",
     ),
     # NOTE: '2channel1dcnn' was REMOVED (2026-07-08 audit). Under the shared
@@ -82,11 +82,11 @@ TRACKS = {
     # src/2channel1dcnn/ directory is kept for provenance but must NOT be reported
     # as an independent architecture.
     "optimized1dcnn": dict(
-        model_py=f"{SRC}/optimized1dcnn/model.py", model_cls="NasaInaraModel",
+        model_py=f"{SRC}/models/optimized1dcnn/model.py", model_cls="NasaInaraModel",
         desc="CNN + BatchNorm + progressive kernels + AdaptiveAvgPool",
     ),
     "transformerarch": dict(
-        model_py=f"{SRC}/transformerarch/model.py", model_cls="NasaInaraTransformer",
+        model_py=f"{SRC}/models/transformerarch/model.py", model_cls="NasaInaraTransformer",
         desc="CNN downsample ×8 → 2-layer Transformer → GAP → MLP",
     ),
     # Causal ARCHITECTURE == transformer (identical backbone). The three causal
@@ -104,18 +104,18 @@ TRACKS = {
     #                 the track's methodological novelty. See common/counterfactuals.py.
     # Train the plain-transformer control with neither flag for the ablation.
     "causal": dict(
-        model_py=f"{SRC}/causal/cnn_trnas/model.py", model_cls="NasaInaraTransformer",
+        model_py=f"{SRC}/models/causal/cnn_trnas/model.py", model_cls="NasaInaraTransformer",
         desc="Transformer backbone; exact do(env) counterfactual augmentation (--cf)",
     ),
     "causal_cfi": dict(
-        model_py=f"{SRC}/causal/cnn_trnas/model.py", model_cls="NasaInaraTransformer",
+        model_py=f"{SRC}/models/causal/cnn_trnas/model.py", model_cls="NasaInaraTransformer",
         desc="Transformer backbone; exact-intervention counterfactual-invariance objective (--cf-invariance)",
     ),
     # ~2M-param dedicated do-calculus backbone (wider/deeper transformer + attention
     # pooling). Intended headline model for the invariance objective; train with:
     #   python -m common.train_runner causal_xl --cf-invariance --seed 0
     "causal_xl": dict(
-        model_py=f"{SRC}/causal/cnn_trnas/causal_model.py", model_cls="NasaInaraCausalNet",
+        model_py=f"{SRC}/models/causal/cnn_trnas/causal_model.py", model_cls="NasaInaraCausalNet",
         desc="~2M-param transformer for the do-calculus counterfactual-invariance objective (--cf-invariance)",
     ),
 }

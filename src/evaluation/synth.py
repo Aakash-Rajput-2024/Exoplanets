@@ -1,5 +1,5 @@
 """Assemble an in-memory INARA-scale (raw_x, noise) pair from engine spectrum
-SHAPES — the in-env equivalent of crossgen_eval/build_cache_v2_prt.py.
+SHAPES — the in-env equivalent of evaluation/crossgen/build_cache_v2_prt.py.
 
 Median-matches each channel to the real cache_v2 test medians (washes out arbitrary
 albedo/radius/units while preserving spectral SHAPE — the informative part), sets

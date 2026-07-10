@@ -21,7 +21,7 @@ import numpy as np
 from evaluation import core, plots
 from evaluation import metrics_extra as mx
 
-sys.path.insert(0, os.path.join(core.SRC, "crossgen_eval"))
+sys.path.insert(0, os.path.join(core.SRC, "evaluation/crossgen"))
 from inara_grid import load_inara_grid   # noqa: E402
 
 SECTION, SUITE = "J", "ood_honesty"

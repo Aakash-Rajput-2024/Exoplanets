@@ -23,7 +23,7 @@ from evaluation import core, synth, known_targets
 from evaluation import metrics_extra as mx
 from evaluation.engines import reflected_engine as eng
 
-sys.path.insert(0, os.path.join(core.SRC, "crossgen_eval"))
+sys.path.insert(0, os.path.join(core.SRC, "evaluation/crossgen"))
 from inara_grid import load_inara_grid   # noqa: E402
 
 SECTION, SUITE = "G", "transiting_ood"

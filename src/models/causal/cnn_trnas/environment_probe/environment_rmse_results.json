@@ -1,0 +1,146 @@
+{
+  "n_eval_samples": 1024,
+  "overall_rmse": 0.022930754348635674,
+  "worst_environment": {
+    "environment_variable": "distance_parsec",
+    "environment": "(11.532, 15.0]",
+    "n": 245,
+    "rmse": 0.02420177310705185,
+    "gap_vs_overall": 0.0012710187584161758
+  },
+  "rows": [
+    {
+      "environment_variable": "distance_parsec",
+      "environment": "(11.532, 15.0]",
+      "n": 245,
+      "rmse": 0.02420177310705185,
+      "gap_vs_overall": 0.0012710187584161758
+    },
+    {
+      "environment_variable": "surface_temperature",
+      "environment": "(299.084, 639.857]",
+      "n": 253,
+      "rmse": 0.023538460955023766,
+      "gap_vs_overall": 0.000607706606388092
+    },
+    {
+      "environment_variable": "distance_parsec",
+      "environment": "(1.2990000000000002, 4.743]",
+      "n": 275,
+      "rmse": 0.02330639772117138,
+      "gap_vs_overall": 0.00037564337253570557
+    },
+    {
+      "environment_variable": "surface_pressure",
+      "environment": "(2.164, 3.498]",
+      "n": 254,
+      "rmse": 0.023203866556286812,
+      "gap_vs_overall": 0.0002731122076511383
+    },
+    {
+      "environment_variable": "star_class",
+      "environment": "4",
+      "n": 338,
+      "rmse": 0.02316981554031372,
+      "gap_vs_overall": 0.00023906119167804718
+    },
+    {
+      "environment_variable": "star_temperature",
+      "environment": "(6229.817, 7199.959]",
+      "n": 249,
+      "rmse": 0.0231588426977396,
+      "gap_vs_overall": 0.0002280883491039276
+    },
+    {
+      "environment_variable": "star_temperature",
+      "environment": "(3800.006, 4925.602]",
+      "n": 278,
+      "rmse": 0.02298761159181595,
+      "gap_vs_overall": 5.685724318027496e-05
+    },
+    {
+      "environment_variable": "star_class",
+      "environment": "3",
+      "n": 326,
+      "rmse": 0.02292359434068203,
+      "gap_vs_overall": -7.160007953643799e-06
+    },
+    {
+      "environment_variable": "star_temperature",
+      "environment": "(4925.602, 5600.925]",
+      "n": 256,
+      "rmse": 0.022904172539711,
+      "gap_vs_overall": -2.6581808924674988e-05
+    },
+    {
+      "environment_variable": "surface_pressure",
+      "environment": "(3.498, 12.006]",
+      "n": 257,
+      "rmse": 0.02286815643310547,
+      "gap_vs_overall": -6.259791553020477e-05
+    },
+    {
+      "environment_variable": "surface_pressure",
+      "environment": "(1.12, 2.164]",
+      "n": 275,
+      "rmse": 0.022837171331048012,
+      "gap_vs_overall": -9.358301758766174e-05
+    },
+    {
+      "environment_variable": "surface_temperature",
+      "environment": "(223.228, 257.381]",
+      "n": 242,
+      "rmse": 0.022746464237570763,
+      "gap_vs_overall": -0.0001842901110649109
+    },
+    {
+      "environment_variable": "surface_temperature",
+      "environment": "(257.381, 299.084]",
+      "n": 261,
+      "rmse": 0.02270500175654888,
+      "gap_vs_overall": -0.000225752592086792
+    },
+    {
+      "environment_variable": "star_class",
+      "environment": "5",
+      "n": 360,
+      "rmse": 0.022631334140896797,
+      "gap_vs_overall": -0.00029942020773887634
+    },
+    {
+      "environment_variable": "surface_pressure",
+      "environment": "(0.099, 1.12]",
+      "n": 238,
+      "rmse": 0.022555306553840637,
+      "gap_vs_overall": -0.0003754477947950363
+    },
+    {
+      "environment_variable": "surface_temperature",
+      "environment": "(128.236, 223.228]",
+      "n": 268,
+      "rmse": 0.022554291412234306,
+      "gap_vs_overall": -0.0003764629364013672
+    },
+    {
+      "environment_variable": "star_temperature",
+      "environment": "(5600.925, 6229.817]",
+      "n": 241,
+      "rmse": 0.022448690608143806,
+      "gap_vs_overall": -0.00048206374049186707
+    },
+    {
+      "environment_variable": "distance_parsec",
+      "environment": "(8.109, 11.532]",
+      "n": 252,
+      "rmse": 0.02242935262620449,
+      "gap_vs_overall": -0.0005014017224311829
+    },
+    {
+      "environment_variable": "distance_parsec",
+      "environment": "(4.743, 8.109]",
+      "n": 252,
+      "rmse": 0.02148856222629547,
+      "gap_vs_overall": -0.0014421921223402023
+    }
+  ]
+}

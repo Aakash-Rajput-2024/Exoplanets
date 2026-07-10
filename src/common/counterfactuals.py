@@ -1,7 +1,7 @@
 """Causal counterfactual augmentation for the retrieval model (the "do-calculus"
 track), regenerated for the v2 contrast/SNR observable.
 
-WHAT THE OLD DSCM DID (src/causal/cnn_trnas/*)
+WHAT THE OLD DSCM DID (src/models/causal/cnn_trnas/*)
     A conditional VAE learned S = g(Z, A, E) + noise, where A = atmospheric
     abundances (the retrieval target) and E = observing/host environment
     (star temperature, distance, star class, surface T/P). Counterfactuals were

@@ -54,5 +54,5 @@ run summarize          "$PY" -m common.summarize
 
 echo; echo "===================================================================",
 echo " OVERNIGHT RUN COMPLETE  $(date)"
-echo " results: src/causal/cnn_trnas/eval_v2/  src/transformerarch/eval_v2/  results_v2/"
+echo " results: src/models/causal/cnn_trnas/eval_v2/  src/models/transformerarch/eval_v2/  results_v2/"
 echo "==================================================================="

@@ -23,7 +23,7 @@ from evaluation.engines import reflected_engine as eng
 from evaluation import metrics_extra as mx
 from common.data import TARGET_COLUMNS
 
-sys.path.insert(0, os.path.join(core.SRC, "crossgen_eval"))
+sys.path.insert(0, os.path.join(core.SRC, "evaluation/crossgen"))
 from inara_grid import load_inara_grid   # noqa: E402
 
 SECTION, SUITE = "E", "solar_system"

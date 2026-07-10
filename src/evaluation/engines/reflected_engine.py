@@ -19,7 +19,7 @@ that through the same suite.
 
 Interface matches evaluation/engines/{prt,taurex}_engine.py: shapes in arbitrary
 units, absolute scale fixed downstream by calibration to INARA
-(crossgen_eval/observable.calibration_factor).
+(evaluation/crossgen/observable.calibration_factor).
 """
 from __future__ import annotations
 
