@@ -12,9 +12,9 @@ tqdm>=4.65
 scikit-learn>=1.3   # common/baselines.py (Ridge / RandomForest reference models)
 
 # NOT required for the core pipeline above. Only needed if you also run:
-#   - src/crossgen_eval/ (cross-generator eval): additionally needs astropy,
+#   - src/evaluation/crossgen/ (cross-generator eval): additionally needs astropy,
 #     scikit-learn, seaborn, and the MultiREx / petitRADTRANS / TauREx
 #     third-party packages, which are cloned/installed separately (see
-#     src/crossgen_eval/README.md) — they are not part of this repo.
+#     src/evaluation/crossgen/README.md) — they are not part of this repo.
 #   - the legacy per-track train.py/test.py/dataloader.py scripts (superseded
 #     by common/train_runner.py + common/evaluate.py; see registry.py).

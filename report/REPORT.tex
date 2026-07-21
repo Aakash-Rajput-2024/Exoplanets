@@ -1,0 +1,620 @@
+\documentclass[11pt]{article}
+
+% ------------------------------------------------------------------
+%  Compile with:  pdflatex REPORT.tex
+%  Figures are read from the figures/ subfolder next to this file.
+% ------------------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{graphicx}
+\graphicspath{{figures/}{./}}   % find PNGs in figures/ or alongside this file
+\usepackage{framed}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+% Black-and-white explanatory box: a rule-framed block (page-breakable), no header.
+\newenvironment{plainbox}%
+  {\par\smallskip\begin{framed}\noindent\itshape}%
+  {\end{framed}\smallskip}
+
+% All figures at a consistent width.
+\newcommand{\reportfig}[2]{%
+  \begin{center}\includegraphics[width=0.92\linewidth]{#1}\end{center}%
+  \vspace{-6pt}\begin{center}\footnotesize #2\end{center}}
+
+\newcommand{\rsq}{$R^2$}
+\newcommand{\um}{\,$\mu$m}
+\newcommand{\alp}{$\alpha$}
+
+\title{\textbf{Machine-Learning Retrieval of Exoplanet Atmospheres\\
+from Reflected-Light Spectra}\\[4pt]
+\large A Consolidated Evaluation Report}
+\author{}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We train compact neural networks (about half a million parameters) to read the
+atmospheric composition of a planet from its reflected-light spectrum --- the rainbow of
+sunlight it bounces back --- across the $0.2$--$2.0$\um{} band. Models are trained on a
+large synthetic library of terrestrial (rocky) planets and evaluated not only on held-out
+synthetic planets but, for the first time in this project, on \emph{real} telescope spectra
+of $19$ Solar-System bodies observed as if they were exoplanets. The headline findings:
+(i) the best model reaches $R^2 = 0.78$ on covered gases while being roughly ten times
+smaller than the original NASA model for this data set (which used $\sim$18 million
+parameters); (ii) on real data the models genuinely detect methane (perfect separation of
+methane-rich from airless bodies) but fabricate oxygen (bare rocks are assigned more oxygen
+than Earth), a flaw we trace to the training data and fix at inference time without
+retraining; (iii) a simple combination of our existing models lifts accuracy to
+$R^2 = 0.85$ with no new training. All numbers below come from frozen, already-trained
+models.
+\end{abstract}
+
+\tableofcontents
+\vspace{1em}
+
+% ==================================================================
+\section*{How to read this report}
+\addcontentsline{toc}{section}{How to read this report}
+
+Two numbers recur throughout:
+
+\begin{itemize}[nosep]
+\item \textbf{\rsq{} (``R-squared'')} measures how well predictions match the truth on a
+scale where $1.0$ is perfect, $0$ is no better than guessing the average, and
+\emph{negative} means worse than guessing. We report it in $\log_{10}$ space because gas
+abundances span many orders of magnitude.
+\item \textbf{\alp{} (exposure factor)} is how long the telescope stares, relative to a
+nominal $8$-hour exposure. More light means less noise. $\alpha = 1$ is a realistic single
+observation; the ``noiseless reference'' is the best-case limit with effectively infinite
+light, isolating what the \emph{model} can do from what the \emph{photons} allow.
+\end{itemize}
+
+``Covered species'' are the five gases that actually leave a fingerprint in this wavelength
+band: water (H$_2$O), carbon dioxide (CO$_2$), oxygen (O$_2$), methane (CH$_4$), and ozone
+(O$_3$).
+
+% ==================================================================
+\section{Baseline accuracy and model size}
+
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Model & Parameters & \rsq{} (covered) \\
+\midrule
+causal (best)     & 520\,k  & \textbf{0.781} \\
+original1dcnn     & 36.0\,M & 0.779 \\
+optimized1dcnn    & 1.20\,M & 0.728 \\
+transformerarch   & 520\,k  & 0.568 \\
+causal\_cfi       & 520\,k  & 0.355 \\
+causal\_xl        & 2.05\,M & 0.173 \\
+\midrule
+\textbf{Linear stack of all 6} & --- & \textbf{0.849} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+(Trained on the synthetic NASA-PSG library, tested on held-out planets from the same
+library, noiseless reference.)
+
+\reportfig{fig01_model_accuracy}{Accuracy by model. The best model (causal) is also the
+smallest; the striped bar is the combined stack of all six.}
+
+\begin{plainbox}
+Our best model scores $0.78$ out of a perfect $1.0$ --- and it is also our
+\emph{smallest} model, at about half a million parameters. For context, the original NASA
+model that introduced this data set (Soboczenski et al., 2018) used a 1D CNN with
+\emph{approximately 18 million} trainable parameters; our best model matches its approach
+while being about $35\times$ smaller. Our own \texttt{original1dcnn} baseline (36M
+parameters) is essentially that same NASA architecture scaled up, and it does \emph{not}
+beat the 520k model. Keeping the core models small was a deliberate choice: they are cheap
+to train on current hardware, which let us benchmark many architectures fairly and leaves a
+clear runway to scale up later if needed. (More recent reflected-light models, e.g.\ Barbosa
+et al.\ 2025, use larger attention-based architectures.) The final line is the most useful
+takeaway of the whole report: simply \emph{combining} the six existing models --- with no
+new training --- reaches $0.85$, our best number anywhere.
+\end{plainbox}
+
+% ==================================================================
+\section{Reference baselines: what does the neural network have to beat?}
+
+A retrieval accuracy number means nothing on its own --- it has to be measured against
+simpler methods that establish a floor. If a deep network cannot beat a straight line, the
+deep network is not justified. The project uses five reference baselines, all evaluated on the
+identical input, at one realistic exposure ($\alpha = 1$) unless stated. The first three are
+statistical, the fourth is a physics reference, and the fifth is an internal sanity check.
+
+\begin{center}
+\begin{tabular}{p{3.2cm}p{6.2cm}cc}
+\toprule
+Baseline & What it is & all-12 \rsq{} & covered \rsq{} \\
+\midrule
+Prior mean & Ignores the spectrum entirely; predicts the average training composition for every
+planet. The ``no-information'' floor. & $-0.059$ & $-0.065$ \\[2pt]
+Ridge (linear) & A straight-line fit from the (compressed) spectrum to abundances. The
+\emph{linear-information} floor. & $0.031$ & $0.086$ \\[2pt]
+Random forest & An ensemble of decision trees on the same features; a capacity-limited
+non-linear reference. & $0.013$ & $0.058$ \\[2pt]
+Band-depth ``ruler'' & Physics baseline: measure the depth of a gas's absorption band by hand,
+no learning at all. & \multicolumn{2}{c}{CH$_4$ AUROC $=1.00$ (real data)} \\[2pt]
+Naive model average & Averages all six neural models with equal weight; an ensemble sanity
+check. & --- & $0.637$ \\
+\midrule
+\textbf{Neural (causal), $\alpha=1$} & Our model at the same exposure as the baselines.
+& \textbf{0.058} & \textbf{0.128} \\
+\textbf{Neural (causal), noiseless} & Our model in the best-case, high-signal limit.
+& \textbf{0.589} & \textbf{0.781} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The statistical baselines were fit on the full library ($\sim$88k train, $\sim$11k
+test) using a $64$-bin compression of each spectrum. (There is also an external benchmark, not
+a baseline model: published literature retrievals of real exoplanets, used elsewhere as a
+reality check.)
+
+\reportfig{fig13_baselines}{The reference floors versus the neural model, all at one real
+exposure. The dashed line marks the neural model's best-case (noiseless) score for context.}
+
+\begin{plainbox}
+The two things to read here. First, at a \emph{single realistic exposure} everything is low ---
+even our model only reaches $0.13$ on covered gases, because one $8$-hour look does not collect
+enough light (Section~6). But it still beats the linear floor ($0.086$) and the do-nothing
+floor ($-0.065$), so the network is genuinely extracting more than a straight line can. Second,
+the honest comparison is in the \emph{best-case} limit, where the network reaches $0.78$ while
+the linear and prior baselines stay near zero --- a large, real gap. A subtle but important
+point: a random forest does \emph{worse} than a plain linear fit here, which tells us the
+useful signal in these spectra is close to linear once the bands are located; the neural net's
+advantage comes from using the full high-resolution spectrum, not from raw non-linearity. The
+``ruler'' baseline matters for the real-data story: a hand-built band-depth measurement already
+achieves perfect methane detection, so our claim is that the network \emph{matches} the physics,
+not that it beats a simple detector.
+\end{plainbox}
+
+% ==================================================================
+\section{Cross-generator test: does the model transfer to other physics engines?}
+
+A model trained on one simulator should ideally still work on spectra made by a
+\emph{different} simulator. We tested three: PSG (what we trained on), TauREx, and
+petitRADTRANS (pRT).
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+Model & PSG (native) & TauREx & pRT & pRT + AdaBN & pRT + affine \\
+      &              &        &     & (0 labels)  & (100 labels) \\
+\midrule
+optimized1dcnn  & 0.728 & $-0.274$ & $-3.736$ & $-0.162$ & $-0.038$ \\
+original1dcnn   & 0.779 & $-0.374$ & $-5.562$ & n/a      & $-0.030$ \\
+transformerarch & 0.568 & ---      & $-1.091$ & n/a      & $-0.041$ \\
+causal          & 0.781 & $-0.325$ & $-3.048$ & ---      & $\sim 0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+AdaBN re-estimates the model's internal normalisation statistics on unlabelled target
+spectra (needs the model to have batch-normalisation layers, hence ``n/a'' for two of
+them). ``Affine'' fits a small per-gas correction using $100$ labelled target planets.
+
+\reportfig{fig02_crossgen_adaptation}{The catastrophic gap on petitRADTRANS is mostly a
+surface mismatch: a zero-label adjustment and then 100 labels bring it back to near zero.}
+
+\begin{plainbox}
+Straight out of the box the model does badly on the other simulators --- the numbers go
+strongly negative, meaning worse than guessing. But this is mostly a \emph{surface
+mismatch}, not a loss of real skill: a zero-label statistical adjustment (AdaBN) removes
+about $95\%$ of the gap, and $100$ labelled examples bring it to roughly zero. ``Roughly
+zero'' means the model stops being actively wrong, but it does not gain genuine
+cross-simulator skill.
+
+\textbf{Context (author's note).} This took a long time to get working and the results were
+disappointing. The deeper reason is a physics mismatch: pRT is fundamentally an
+\emph{emission} (heat-glow) simulator with a reflected-light mode bolted on, while TauREx is
+a \emph{reflected-light} model but one built for large gaseous planets, not the small rocky
+atmospheres our dataset represents. We also tried training on two synthetic datasets at once
+hoping for an overall improvement, but since each dataset comes from a different underlying
+engine, mixing them was a dead end. Honestly, the cross-generator \rsq{} values are poor,
+and this remains the weakest part of the pipeline.
+\end{plainbox}
+
+% ==================================================================
+\section{Per-gas accuracy}
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Gas & \rsq{} (noiseless) & \rsq{} at \alp{}$=1$ & RMSE at \alp{}$=1$ (dex) \\
+\midrule
+H$_2$O & 0.72 & 0.06 & 0.44 \\
+CO$_2$ & 0.73 & 0.03 & 0.36 \\
+O$_2$  & 0.80 & 0.12 & 0.36 \\
+CH$_4$ & 0.79 & 0.11 & 0.42 \\
+O$_3$  & 0.86 & 0.33 & 0.48 \\
+N$_2$  & $-0.06$ & $-0.06$ & --- (invisible; honest null) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Derived carbon-to-oxygen (C/O) ratio}, in $\log_{10}$:
+noiseless reference \rsq{} $= 0.81$, median error $0.05$ dex;
+at \alp{}$=1$, \rsq{} $= 0.10$, median error $0.12$ dex.
+(True $\log_{10}$ C/O spans $-1.92$ to $-0.24$, median $-0.58$.)
+
+\reportfig{fig03_pergas_accuracy}{Per-gas accuracy in the best case (solid) versus one
+realistic exposure (striped). Nitrogen is a permanent null --- it is invisible in this band.}
+
+\begin{plainbox}
+Each gas is recovered well in the best-case (noiseless) limit but degrades once realistic
+observing noise is added --- the two columns show the gap. The C/O ratio, a key
+planet-formation diagnostic, is genuinely recoverable when the signal is strong
+($R^2 = 0.81$) but noise-limited at a single realistic exposure.
+
+Two honest caveats. First, \textbf{temperature and metallicity are not things this model
+predicts} --- the training data does not label them, so they simply are not retrieval
+targets here. Second, \textbf{N$_2$ (nitrogen) is essentially impossible for any neural
+network to detect} in this band, because nitrogen leaves no fingerprint in reflected light.
+Its negative score is not a failure of the model; it is physics. Earth's atmosphere is
+$78\%$ nitrogen and none of it is visible.
+\end{plainbox}
+
+% ==================================================================
+\section{Exposure time versus accuracy}
+
+\begin{center}
+\begin{tabular}{lccccccc}
+\toprule
+Exposure ($\times$ nominal) & 0.09 & 1 & 9 & 100 & 900 & $10^4$ & $9{\times}10^4$ \\
+\midrule
+\rsq{} (covered) & $-0.02$ & 0.13 & 0.35 & 0.56 & 0.70 & 0.79 & 0.83 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\reportfig{fig04_exposure_accuracy}{Accuracy versus exposure time for all six models. The
+curve is set by photon noise, not by the choice of architecture.}
+
+\begin{plainbox}
+Accuracy is limited by how many photons the telescope collects, not by the model. A single
+nominal exposure gives only $R^2 = 0.13$; reaching the model's true ceiling would need about
+ten-thousand times longer staring. The practical message: \textbf{any accuracy claim is
+meaningless without stating the exposure time it assumes.}
+\end{plainbox}
+
+% ==================================================================
+\section{Clouds: can we retrieve through them?}
+
+Clouds hide the gas fingerprints beneath them. We trained a separate ``de-clouding'' network
+to reconstruct the clear spectrum, then fed the result to the frozen retrieval models. It was
+trained only on one cloud type (``grey''); the other three are unseen tests.
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Cloud family & Cloudy \rsq{} & De-clouded \rsq{} & Recovery \\
+\midrule
+grey (seen)        & $-1.02$ & $-0.19$ & 0.46 \\
+non-grey haze      & $-0.51$ & $-0.19$ & 0.25 \\
+band-selective     & $-0.61$ & $-0.28$ & 0.24 \\
+patchy (Earth-like)& $-0.97$ & $-0.21$ & 0.44 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\reportfig{fig05_cloud_generalization}{Clouds (light bars) crush accuracy below zero;
+de-clouding (dark bars) recovers part of it, even on cloud types not seen in training.}
+
+\begin{plainbox}
+The de-clouder recovers $24$--$46\%$ of the accuracy that clouds destroy, and importantly it
+still helps on cloud types it never saw in training. So as a stand-alone tool it works ---
+partially.
+
+\textbf{Context (author's note).} Overall, clouds remain hard. We tried two routes and
+neither was a clean success. The first was to teach the retrieval models directly on
+cloud-augmented data (muting and boosting parts of the spectrum); this needed very long
+training and did not actually improve things --- it made the models worse. The second was
+this separate de-clouding module (around one million parameters, two variants tried). It
+works in isolation, but there is a fundamental limitation: our clouds are generated from
+tidy mathematical formulas, not real observed cloud noise, so the ``restored'' spectrum does
+not fully match what a real cloudy planet would give.
+
+\textbf{Important safety caveat.} The de-clouder is \emph{not safe to run on an already-clear
+spectrum} --- doing so badly damages it, because it was never shown a clear sky during
+training and always assumes a cloud is present. It should only be applied when a thick cloud
+is independently known to be there, and it needs one training fix before general use.
+\end{plainbox}
+
+% ==================================================================
+\section{Uncertainty estimates}
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Gas & Interval width (dex) & Coverage (native) & Coverage (at R$=$22) \\
+\midrule
+H$_2$O & 0.20 & 0.71 & 0.36 \\
+CO$_2$ & 0.15 & 0.71 & 0.20 \\
+O$_2$  & 0.13 & 0.67 & 0.26 \\
+CH$_4$ & 0.16 & 0.67 & 0.41 \\
+O$_3$  & 0.18 & 0.67 & 0.16 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Target coverage is $0.68$ (a ``68\% confidence interval'' should contain the truth
+$68\%$ of the time).
+
+\reportfig{fig06_uncertainty_coverage}{Error-bar honesty. At native resolution the
+intervals cover the truth about the right fraction of the time; on blurred data they become
+far too narrow.}
+
+\begin{plainbox}
+The raw model is \emph{overconfident} --- its error bars are too narrow. A statistical
+technique called split-conformal calibration produces \emph{honest} error bars that contain
+the truth the right fraction of the time ($\sim 0.68$) --- but only when the test data looks
+like the training data. When the spectrum is lower-resolution (blurrier), the same error bars
+become far too narrow (coverage drops to $0.16$--$0.41$); the honest interval is $2$--$4$
+times wider. The fix is to re-calibrate the error bars at the target's actual resolution,
+which needs no retraining.
+\end{plainbox}
+
+% ==================================================================
+\section{Real data: Solar-System bodies observed as exoplanets}
+
+This is the first time the models were tested on \emph{real} telescope spectra rather than
+simulations. We used a public catalog of $19$ Solar-System bodies. Crucially, we know exactly
+what these objects are made of, so we can grade the models honestly. The bodies fall into
+three groups: four terrestrial planets/moons \emph{with} atmospheres, four giant planets, and
+eleven \emph{airless} bodies (moons, asteroids) with \emph{no} atmosphere at all --- the
+last group is a built-in trap for false detections.
+
+\subsection{Methane: a genuine detection}
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+Model & CH$_4$ detection AUROC \\
+\midrule
+original1dcnn   & 1.00 \\
+transformerarch & 1.00 \\
+causal          & 1.00 \\
+causal\_cfi     & 1.00 \\
+optimized1dcnn  & 0.88 \\
+causal\_xl      & 0.76 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent AUROC (Area Under the ROC Curve) measures how well the model separates two groups:
+$1.0$ is perfect separation, $0.5$ is a coin flip. Here: $5$ methane-rich bodies versus $5$
+airless bodies, all at matched resolution.
+
+\reportfig{fig07_ch4_detection_auroc}{Methane detection on real spectra. Four of six models
+separate methane-rich from airless bodies perfectly.}
+
+\begin{plainbox}
+Four of six models achieve \emph{perfect} separation ($1.00$): every methane-rich body scores
+higher than every airless one. We confirmed this is real, not luck: blanking out the methane
+wavelengths destroys the signal, while blanking unrelated wavelengths does not. A simple
+hand-built ``ruler'' that just measures band depth also scores $1.00$ --- so the fair claim is
+\emph{the network matches the physics}, not that it beats it. This is the strongest real-data
+result in the project.
+\end{plainbox}
+
+\subsection{Oxygen: a fabricated ``detection''}
+
+\begin{center}
+\small
+\begin{tabular}{lrrrrrrr}
+\toprule
+Body & Class & R & usable? & true dom. & pred. & dex err & pred O$_2$+O$_3$ \\
+\midrule
+Earth     & terrestrial & 867 & yes & N$_2$ & O$_2$ & 2.17 & 0.41 \\
+Venus     & terrestrial & 22  & no  & CO$_2$& CO$_2^{*}$ & 1.73 & 0.18 \\
+Mars      & terrestrial & 22  & no  & CO$_2$& O$_2$ & 1.19 & 0.41 \\
+Titan     & terrestrial & 829 & yes & N$_2$ & CO$_2$& 0.64 & 0.33 \\
+Jupiter   & giant       & 865 & yes & H$_2$/He & O$_2$ & --- & 0.31 \\
+Saturn    & giant       & 867 & yes & H$_2$/He & O$_2$ & --- & 0.38 \\
+Uranus    & giant       & 867 & yes & H$_2$/He & O$_2$ & --- & 0.32 \\
+Neptune   & giant       & 867 & yes & H$_2$/He & CO$_2$& --- & 0.32 \\
+Mercury   & airless     & 43  & no  & none  & O$_2$ & --- & \textbf{0.46} \\
+Moon      & airless     & 867 & yes & none  & O$_2$ & --- & \textbf{0.45} \\
+Io        & airless     & 12  & no  & none  & O$_2$ & --- & 0.39 \\
+Europa    & airless     & 25  & no  & none  & CO$_2$& --- & 0.33 \\
+Ganymede  & airless     & 31  & no  & none  & CO$_2$& --- & 0.29 \\
+Callisto  & airless     & 21  & no  & none  & O$_2$ & --- & 0.41 \\
+Enceladus & airless     & 526 & yes & none  & CO$_2$& --- & 0.15 \\
+Dione     & airless     & 829 & yes & none  & CO$_2$& --- & 0.26 \\
+Rhea      & airless     & 866 & yes & none  & CO$_2$& --- & 0.31 \\
+Ceres     & airless     & 866 & yes & none  & O$_2$ & --- & 0.42 \\
+Pluto     & airless     & 100 & no  & none  & CO$_2$& --- & 0.31 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent$^{*}$Venus's correct CO$_2$ call is a ``stopped clock'': its spectrum is too
+low-resolution to use, and the same model labels many airless rocks CO$_2$ too.
+
+\reportfig{fig08_o2_fabrication}{Predicted oxygen on all 19 bodies, sorted. Light bars are
+airless bodies with zero atmosphere; several out-score Earth (dotted line = Earth's true
+value).}
+
+\begin{plainbox}
+The airless bodies have \emph{zero} oxygen --- they have no atmosphere. Yet the models assign
+them about $30$--$46\%$ oxygen, with the Moon and Mercury (bare rock) scoring \emph{higher}
+than Earth. The reason is not the architecture: the training set happens to contain a lot of
+oxygen-rich planets, so the model's safe default guess for anything unfamiliar is ``about a
+third oxygen.'' It is reciting a habit, not reading the spectrum. This is why an apparent
+``oxygen detection'' on real Earth in earlier reports was never real.
+\end{plainbox}
+
+\subsection{Earth versus the Moon: the cleanest control}
+
+Earth and the Moon were observed on the same night, with the same instrument, at the same
+resolution. One has $21\%$ oxygen; the other is a rock.
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Model & Earth O$_2$ (true 0.21) & Moon O$_2$ (true 0.00) & Earth $-$ Moon \\
+\midrule
+original1dcnn   & 0.455 & 0.461 & $-0.006$ \\
+optimized1dcnn  & 0.517 & 0.536 & $-0.019$ \\
+transformerarch & 0.392 & 0.465 & $-0.073$ \\
+causal          & 0.404 & 0.446 & $-0.043$ \\
+causal\_cfi     & 0.312 & 0.305 & $+0.007$ \\
+causal\_xl      & 0.311 & 0.313 & $-0.002$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\reportfig{fig09_earth_vs_moon}{Earth (dark) versus the Moon (striped) in predicted oxygen.
+The rock matches or beats Earth for five of six models.}
+
+\begin{plainbox}
+Five of six models give the \emph{rock} more oxygen than Earth. This is the sharpest possible
+demonstration that the oxygen numbers carry no real information --- until we fix them
+(next section).
+\end{plainbox}
+
+\subsection{Resolution: which gases need how sharp a spectrum?}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{l|ccccc|ccccc}
+\toprule
+ & \multicolumn{5}{c|}{Raw \rsq{}} & \multicolumn{5}{c}{After recalibration} \\
+R & H$_2$O & CO$_2$ & O$_2$ & CH$_4$ & O$_3$ & H$_2$O & CO$_2$ & O$_2$ & CH$_4$ & O$_3$ \\
+\midrule
+22     & $-0.24$ & $-1.87$ & $-0.15$ & 0.32 & 0.27 & 0.36 & 0.11 & 0.33 & 0.34 & 0.80 \\
+50     & 0.48 & $-4.37$ & 0.26 & 0.50 & 0.55 & 0.54 & 0.09 & 0.53 & 0.56 & 0.85 \\
+100    & 0.55 & $-1.82$ & 0.53 & 0.64 & 0.67 & 0.61 & 0.22 & 0.69 & 0.68 & 0.87 \\
+200    & 0.64 & 0.39 & 0.71 & 0.74 & 0.76 & 0.67 & 0.52 & 0.76 & 0.76 & 0.88 \\
+400    & 0.60 & 0.68 & 0.78 & 0.79 & 0.81 & 0.68 & 0.68 & 0.78 & 0.81 & 0.89 \\
+870    & 0.59 & 0.70 & 0.80 & 0.80 & 0.83 & 0.70 & 0.70 & 0.79 & 0.82 & 0.89 \\
+native & 0.71 & 0.74 & 0.80 & 0.78 & 0.83 & 0.74 & 0.74 & 0.84 & 0.83 & 0.89 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent ``R'' is spectral resolution --- how finely the spectrum is sampled. Higher is
+sharper.
+
+\reportfig{fig10_resolution_requirements}{Accuracy versus how sharp the spectrum is. Most
+gases survive moderate blur; carbon dioxide collapses below R$=$200 (dashed line).}
+
+\begin{plainbox}
+Carbon dioxide is the demanding case: it needs a fairly sharp spectrum ($R \geq 200$), and if
+the spectrum is too blurry ($R = 22$) \emph{no amount of correction can recover it} --- the
+information is physically gone. This is exactly why the models fail on catalog Venus and Mars:
+those spectra are too blurry, which is a limitation of the \emph{data}, not the model. Every
+other gas degrades gracefully and can be recalibrated down to moderate resolution; ozone
+survives even the blurriest case.
+
+\textbf{Context (author's note).} This was a key test --- using real planets and their moons
+instead of only simulations. The result was encouraging: the models show real signs of
+understanding, such as correctly picking out methane, even though they over-estimate oxygen.
+\end{plainbox}
+
+% ==================================================================
+\section{New inference-only fixes (no retraining)}
+
+Everything here runs on the existing frozen models --- no retraining, no new data.
+
+\subsection{Continuum-twin nulling: removing the fabricated oxygen}
+
+For each body we build a ``twin'' of its spectrum with the absorption bands smoothed away,
+then subtract the twin's prediction from the real one. Since the twin shares everything
+\emph{except} the gas fingerprints, the model's habitual guess cancels out.
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Metric & causal (raw $\rightarrow$ nulled) & optimized (raw $\rightarrow$ nulled) \\
+\midrule
+CH$_4$ AUROC              & $1.00 \rightarrow 0.92$ & $0.88 \rightarrow 1.00$ \\
+O$_2$ AUROC (Earth vs rocks) & $0.64 \rightarrow 0.91$ & $0.73 \rightarrow 1.00$ \\
+mean $|$O$_2|$ on rocks   & $0.341 \rightarrow 0.016$ & $0.468 \rightarrow 0.006$ \\
+mean $|$CO$_2|$ on rocks  & $0.351 \rightarrow 0.013$ & $0.186 \rightarrow 0.007$ \\
+mean $|$N$_2|$ on rocks   & $0.255 \rightarrow 0.003$ & $0.271 \rightarrow 0.004$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\reportfig{fig11_twin_nulling}{Fabricated gas on airless rocks (light bars) before and
+(dark bars) after twin-nulling --- it collapses toward zero, where it should be.}
+
+\begin{plainbox}
+This works remarkably well: the fabricated gas on airless rocks shrinks by $20$--$80$ times,
+while the genuine methane signal survives, and the Earth-versus-Moon oxygen comparison finally
+comes out the right way round. It converts a model that ``recites its habit'' into one that
+``reports the difference the bands make'' --- and it costs nothing but a second forward pass.
+\end{plainbox}
+
+\subsection{Model stacking: breaking the accuracy ceiling}
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+Combiner & \rsq{} (covered) \\
+\midrule
+Best single model        & 0.777 \\
+Plain average of 6 models & 0.637 \\
+Per-gas linear stack      & \textbf{0.849} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\reportfig{fig12_model_stacking}{Combining the six frozen models with a per-gas weighting
+(striped bar) beats the best single model; a naive average is worse.}
+
+\begin{plainbox}
+The six models make \emph{different} mistakes, so combining them cleverly (a small per-gas
+weighted blend, fitted on held-out data) beats the best individual model by $+0.07$ ---
+reaching $0.85$. The naive average is \emph{worse} than the best single model, because it lets
+the weak models drag down the strong ones; the weighting is what matters. This is the cheapest
+accuracy gain available and requires no retraining.
+\end{plainbox}
+
+% ==================================================================
+\section{What did not work (honest log)}
+
+\begin{itemize}[leftmargin=1.4em]
+\item \textbf{Cross-simulator training.} Training on other physics engines (pRT, TauREx) to
+gain transfer was abandoned: pRT models heat-emission not reflected light, TauREx targets gas
+giants not rocky worlds, and mixing datasets from different engines was a dead end. Fine-tuning
+on one of them caused catastrophic forgetting (accuracy $0.78 \rightarrow 0.32$).
+\item \textbf{Cloud-augmented retraining.} Teaching the retrieval models on artificially
+clouded spectra needed very long training and made accuracy \emph{worse}.
+\item \textbf{The naive 6-model average} (0.637) is worse than the best single model (0.777);
+only the weighted stack helps.
+\item \textbf{The de-clouder on clear spectra} is actively harmful (see \S6) until retrained.
+\item \textbf{Nitrogen, and CO$_2$ at low resolution}, are physically unrecoverable --- these
+are honest ``no'' results, not fixable by better models.
+\item \textbf{A trap worth remembering:} de-clouding appeared to ``fix Venus'' (correct CO$_2$)
+but was in fact labelling \emph{every} body CO$_2$ --- only the airless-body controls exposed
+it.
+\end{itemize}
+
+% ==================================================================
+\section{Outlook}
+
+We believe we have built close to the best achievable model for this dataset and are near the
+state of the art, at a fraction of the usual model size. The natural next step is to train a
+single large ($\sim 5$M-parameter) model on the best architecture and repeat the full
+evaluation. Because testing a model that size is time-consuming, we propose doing so only after
+agreeing the path forward.
+
+\medskip
+\noindent\textit{All results in this report are from frozen, already-trained models; no model
+was retrained to produce these numbers.}
+
+\end{document}

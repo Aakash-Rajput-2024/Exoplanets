@@ -41,7 +41,7 @@ def _draw_log_uniform_alpha(n, alpha_range, generator):
     model span every exposure instead of overfitting to a single noise level —
     without it the model specializes to the training α and the R²-vs-exposure
     sweep humps then DECLINES at high SNR (a covariate-shift artifact, not
-    physics). See notes/ULTRAPLAN_review.md Part 3.
+    physics). See junk/notes/ULTRAPLAN_review.md Part 3.
     """
     lo, hi = alpha_range
     u = torch.rand(n, 1, generator=generator)

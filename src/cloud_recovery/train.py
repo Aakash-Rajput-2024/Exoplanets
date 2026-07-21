@@ -24,9 +24,9 @@ from torch.utils.data import DataLoader
 
 from common.registry import CACHE_V2
 from common.runtime import get_device
-from decloud.cloud_pairs import (CloudPairDataset, GreyCloudPairCollate, build_fixed_pairs,
+from cloud_recovery.cloud_pairs import (CloudPairDataset, GreyCloudPairCollate, build_fixed_pairs,
                                  get_norm_v2, DEFAULT_ALPHA_RANGE)
-from decloud.model import DecloudUNet1D, count_params
+from cloud_recovery.model import DecloudUNet1D, count_params
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 CKPT_DIR = os.path.join(THIS_DIR, "checkpoints")

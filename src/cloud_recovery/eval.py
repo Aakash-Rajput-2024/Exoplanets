@@ -38,8 +38,8 @@ from common.inputs import build_eval_observable
 from common.observable import make_observable
 from common.data import load_wavelength
 from common import cloud_families, metrics
-from decloud.model import DecloudUNet1D
-from decloud.cloud_pairs import apply_family_to_raw, FAMILIES
+from cloud_recovery.model import DecloudUNet1D
+from cloud_recovery.cloud_pairs import apply_family_to_raw, FAMILIES
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(THIS_DIR, "eval_out")
