@@ -29,9 +29,9 @@
           1.63,
           0.16,
           0.0,
-          -5.562,
-          -1.18,
-          0.002,
+          -6.827,
+          -1.981,
+          0.001,
           "no transfer (genuine)"
         ],
         [
@@ -39,9 +39,9 @@
           0.89,
           0.0,
           0.0,
-          -0.374,
-          -0.09,
-          0.001,
+          -0.67,
+          -0.118,
+          0.0,
           "no transfer (genuine)"
         ],
         [
@@ -49,9 +49,9 @@
           0.01,
           0.99,
           1.0,
-          0.757,
-          0.794,
-          0.804,
+          0.825,
+          0.834,
+          0.837,
           "biased extrapolation (fixable)"
         ]
       ]
@@ -67,17 +67,17 @@
     "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/original1dcnn/ood_honesty/ood_delta_psg.png"
   ],
   "provenance": {
-    "epochs_run": 10,
-    "epochs_planned": 10,
-    "best_epoch": 10,
+    "epochs_run": 50,
+    "epochs_planned": 50,
+    "best_epoch": 50,
     "batch_size": 64,
     "loss": "huber",
     "lr": 0.001,
     "obs_mode": "contrast_snr",
     "label_transform": "clr",
     "input_norm": "per_lambda_asinh",
-    "git_commit": "aad036b02b155f754cc205a7869d10d5af2be803-dirty",
-    "config_hash": "dab61e7f17bd"
+    "git_commit": "3d7318bb26fb062e485bcddf4b469ed320a4ca97-dirty",
+    "config_hash": "f6a1e2a8fe68"
   },
   "data": {
     "engines": {
@@ -95,9 +95,9 @@
             "CH4",
             "O3"
           ],
-          "mean_r2_raw": -5.56194924332612,
-          "mean_r2_debiased": -1.1804825164585389,
-          "mean_r2_pearson": 0.002378038315427652
+          "mean_r2_raw": -6.8269348545787025,
+          "mean_r2_debiased": -1.9805969484233317,
+          "mean_r2_pearson": 0.0007306004712349211
         },
         "verdict": "no transfer (genuine)"
       },
@@ -115,9 +115,9 @@
             "CH4",
             "O3"
           ],
-          "mean_r2_raw": -0.37372470028479615,
-          "mean_r2_debiased": -0.09019799149649929,
-          "mean_r2_pearson": 0.0005038899256613136
+          "mean_r2_raw": -0.6698883374505717,
+          "mean_r2_debiased": -0.11752003242144551,
+          "mean_r2_pearson": 0.000491773093564491
         },
         "verdict": "no transfer (genuine)"
       },
@@ -135,13 +135,13 @@
             "CH4",
             "O3"
           ],
-          "mean_r2_raw": 0.7570738117021927,
-          "mean_r2_debiased": 0.7935353069836715,
-          "mean_r2_pearson": 0.80437869449325
+          "mean_r2_raw": 0.8250643005289622,
+          "mean_r2_debiased": 0.8339883536206303,
+          "mean_r2_pearson": 0.8371870691118432
         },
         "verdict": "biased extrapolation (fixable)"
       }
     }
   },
-  "generated_at": "2026-07-09T22:23:16"
+  "generated_at": "2026-08-09T15:23:41"
 }

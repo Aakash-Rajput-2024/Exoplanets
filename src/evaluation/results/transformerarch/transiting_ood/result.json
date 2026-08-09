@@ -7,7 +7,7 @@
   "epistemic": "NO ground truth. Wrong observable \u2014 anomaly/stability only, never accuracy.",
   "headline": {
     "INARA anomaly median": 0.8057727217674255,
-    "INARA anomaly p95": 1.8558274507522583,
+    "INARA anomaly p95": 1.8558275043964387,
     "real spectra found": 0
   },
   "tables": [
@@ -24,7 +24,7 @@
           "DEMO: WASP-39b-like transmission",
           2.35,
           "2.9\u00d7",
-          0.0036
+          0.004
         ]
       ]
     }
@@ -51,14 +51,14 @@
   "data": {
     "inara_reference": {
       "median": 0.8057727217674255,
-      "p95": 1.8558274507522583
+      "p95": 1.8558275043964387
     },
     "probes": {
       "demo_transmission": {
         "anomaly": 2.3543171882629395,
-        "stability_std": 0.0035714900586754084
+        "stability_std": 0.004014752339571714
       }
     }
   },
-  "generated_at": "2026-07-09T22:30:01"
+  "generated_at": "2026-08-09T15:44:18"
 }

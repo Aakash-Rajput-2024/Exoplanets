@@ -2,7 +2,7 @@
   "section": "A",
   "suite": "in_distribution",
   "title": "In-distribution (INARA held-out test)",
-  "track": "causal",
+  "track": "causal_cfi",
   "status": "preliminary",
   "epistemic": "Ground truth: exact (synthetic). The information ceiling of the observable.",
   "headline": {
@@ -217,7 +217,7 @@
     "PRELIMINARY: n<3 seeds \u2014 no across-seed variance; CIs are test-planet bootstrap only."
   ],
   "artifacts": [
-    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/causal/in_distribution/r2_vs_snr.png"
+    "/Users/aakashrajput/MachineLearning/Exoplanets/src/evaluation/results/causal_cfi/in_distribution/r2_vs_snr.png"
   ],
   "provenance": {
     "epochs_run": 50,
@@ -493,5 +493,5 @@
       0.05776872858405113
     ]
   },
-  "generated_at": "2026-08-09T15:52:17"
+  "generated_at": "2026-08-09T17:57:08"
 }

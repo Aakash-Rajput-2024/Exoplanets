@@ -1,65 +1,65 @@
 {
   "transformerarch": {
-    "updated": "2026-07-09T22:30:44",
-    "n_seeds": 1,
+    "updated": "2026-08-09T15:48:38",
+    "n_seeds": 3,
     "sections": {
       "A": {
-        "R2_covered @a=1": 0.13823671638965607,
-        "R2_all12 @a=1": 0.0646807923913002,
-        "R2_covered noiseless-ref (a=300)": 0.5684410929679871,
-        "R2_all12 noiseless-ref": 0.36738601326942444,
-        "RMSE_all12 (dex) @a=1": 0.4431542158126831,
-        "n_seeds": 1,
+        "R2_covered @a=1": 0.13936635851860046,
+        "R2_all12 @a=1": 0.06505484133958817,
+        "R2_covered noiseless-ref (a=300)": 0.7683945298194885,
+        "R2_all12 noiseless-ref": 0.5117890238761902,
+        "RMSE_all12 (dex) @a=1": 0.44302308559417725,
+        "n_seeds": 3,
         "per_seed_R2_all12_mean\u00b1std": [
-          0.0646807923913002,
-          null
+          0.06297111262877782,
+          0.0015246886523857712
         ]
       },
       "B": {
-        "neural_all12_R2@a1": 0.0646807923913002,
+        "neural_all12_R2@a1": 0.06505484133958817,
         "Ridge_floor_R2": 0.030993184074759483,
         "beats_linear_floor": true
       },
       "C": {
-        "native_R2_covered_ref": 0.5684410929679871,
-        "prt_R2_covered_ref": -1.0914045572280884,
-        "taurex_R2_covered_ref": -1.359340786933899
+        "native_R2_covered_ref": 0.7683945298194885,
+        "prt_R2_covered_ref": -0.8755117654800415,
+        "taurex_R2_covered_ref": -0.7964569330215454
       },
       "D": {
-        "native_R2_covered_ref": 0.5684410929679871,
-        "anchor_R2_covered_ref": 0.5788819193840027,
-        "anchor/native": 1.0183674729803596,
+        "native_R2_covered_ref": 0.7683945298194885,
+        "anchor_R2_covered_ref": 0.7549697756767273,
+        "anchor/native": 0.9825288265054216,
         "PASS(\u22650.9\u00d7)": true
       },
       "E": {
         "dominant-gas correct (terrestrial)": "2/4",
-        "mean dex-err covered (terrestrial)": 1.6501900552224926
+        "mean dex-err covered (terrestrial)": 1.6885382014282544
       },
       "F": {
         "dominant true": "N2",
         "dominant pred": "O2",
         "dominant correct": false,
-        "mean dex-err (covered)": 1.8895006672542578,
-        "ordering \u03c1": 0.7510085782905936
+        "mean dex-err (covered)": 2.0087574401500747,
+        "ordering \u03c1": 0.7830421195446947
       },
       "G": {
         "INARA anomaly median": 0.8057727217674255,
-        "INARA anomaly p95": 1.8558274507522583,
+        "INARA anomaly p95": 1.8558275043964387,
         "real spectra found": 0
       },
       "H": {
         "n_targets": 6,
         "n_near-domain (direct-imaging)": 2,
-        "mean dex-err (near-domain)": 1.9472384905550164
+        "mean dex-err (near-domain)": 2.07931188476378
       },
       "I": {
-        "n_posterior_samples": 20,
-        "coverage_68 (active)": 0.16620000000000001,
-        "coverage_95 (active)": 0.29700000000000004,
-        "PIT-KS (active mean)": 0.533,
-        "reliability_ECE": 0.38231578947368416,
-        "TARP_ECE": 0.36819047619047623,
-        "posterior_spread(dex)": 0.056074175983667374
+        "n_posterior_samples": 90,
+        "coverage_68 (active)": 0.4484,
+        "coverage_95 (active)": 0.5999000000000001,
+        "PIT-KS (active mean)": 0.29044444444444445,
+        "reliability_ECE": 0.20365789473684207,
+        "TARP_ECE": 0.3401428571428571,
+        "posterior_spread(dex)": 0.09484101831912994
       },
       "J": {
         "prt_verdict": "no transfer (genuine)",
@@ -69,7 +69,7 @@
     }
   },
   "optimized1dcnn": {
-    "updated": "2026-07-09T22:20:22",
+    "updated": "2026-08-09T15:26:36",
     "n_seeds": 3,
     "sections": {
       "A": {
@@ -113,7 +113,7 @@
       },
       "G": {
         "INARA anomaly median": 0.8057727217674255,
-        "INARA anomaly p95": 1.8558274507522583,
+        "INARA anomaly p95": 1.8558275043964387,
         "real spectra found": 0
       },
       "H": {
@@ -122,13 +122,13 @@
         "mean dex-err (near-domain)": 1.9819222712484468
       },
       "I": {
-        "n_posterior_samples": 60,
-        "coverage_68 (active)": 0.3598,
-        "coverage_95 (active)": 0.5418000000000001,
-        "PIT-KS (active mean)": 0.3176,
-        "reliability_ECE": 0.2667631578947368,
-        "TARP_ECE": 0.3415238095238095,
-        "posterior_spread(dex)": 0.08080918341875076
+        "n_posterior_samples": 90,
+        "coverage_68 (active)": 0.3642,
+        "coverage_95 (active)": 0.545,
+        "PIT-KS (active mean)": 0.30935555555555555,
+        "reliability_ECE": 0.2609912280701754,
+        "TARP_ECE": 0.34700000000000003,
+        "posterior_spread(dex)": 0.08128894865512848
       },
       "J": {
         "prt_verdict": "no transfer (genuine)",
@@ -138,66 +138,66 @@
     }
   },
   "original1dcnn": {
-    "updated": "2026-07-09T22:23:16",
-    "n_seeds": 1,
+    "updated": "2026-08-09T15:23:41",
+    "n_seeds": 3,
     "sections": {
       "A": {
-        "R2_covered @a=1": 0.12407849729061127,
-        "R2_all12 @a=1": 0.05412755906581879,
-        "R2_covered noiseless-ref (a=300)": 0.7787189483642578,
-        "R2_all12 noiseless-ref": 0.550132691860199,
-        "RMSE_all12 (dex) @a=1": 0.44582605361938477,
-        "n_seeds": 1,
+        "R2_covered @a=1": 0.13700316846370697,
+        "R2_all12 @a=1": 0.06263417750597,
+        "R2_covered noiseless-ref (a=300)": 0.8475226163864136,
+        "R2_all12 noiseless-ref": 0.5918557047843933,
+        "RMSE_all12 (dex) @a=1": 0.4436922073364258,
+        "n_seeds": 3,
         "per_seed_R2_all12_mean\u00b1std": [
-          0.05412755906581879,
-          null
+          0.061492123951514564,
+          0.00037311005799779364
         ]
       },
       "B": {
-        "neural_all12_R2@a1": 0.05412755906581879,
+        "neural_all12_R2@a1": 0.06263417750597,
         "Ridge_floor_R2": 0.030993184074759483,
         "beats_linear_floor": true
       },
       "C": {
-        "native_R2_covered_ref": 0.7787189483642578,
-        "prt_R2_covered_ref": -5.561949729919434,
-        "taurex_R2_covered_ref": -0.3737243413925171
+        "native_R2_covered_ref": 0.8475226163864136,
+        "prt_R2_covered_ref": -6.826939582824707,
+        "taurex_R2_covered_ref": -0.6698883771896362
       },
       "D": {
-        "native_R2_covered_ref": 0.7787189483642578,
-        "anchor_R2_covered_ref": 0.7570736408233643,
-        "anchor/native": 0.9722039542169088,
+        "native_R2_covered_ref": 0.8475226163864136,
+        "anchor_R2_covered_ref": 0.8250641822814941,
+        "anchor/native": 0.9735010798877844,
         "PASS(\u22650.9\u00d7)": true
       },
       "E": {
-        "dominant-gas correct (terrestrial)": "1/4",
-        "mean dex-err covered (terrestrial)": 1.557775973176825
+        "dominant-gas correct (terrestrial)": "0/4",
+        "mean dex-err covered (terrestrial)": 1.6095081603557906
       },
       "F": {
         "dominant true": "N2",
         "dominant pred": "O2",
         "dominant correct": false,
-        "mean dex-err (covered)": 2.077562954372784,
-        "ordering \u03c1": 0.8791427433069983
+        "mean dex-err (covered)": 2.060365031548029,
+        "ordering \u03c1": 0.8435499196913303
       },
       "G": {
         "INARA anomaly median": 0.8057727217674255,
-        "INARA anomaly p95": 1.8558274507522583,
+        "INARA anomaly p95": 1.8558275043964387,
         "real spectra found": 0
       },
       "H": {
         "n_targets": 6,
         "n_near-domain (direct-imaging)": 2,
-        "mean dex-err (near-domain)": 2.111312683295188
+        "mean dex-err (near-domain)": 2.1076676118988535
       },
       "I": {
-        "n_posterior_samples": 20,
-        "coverage_68 (active)": 0.24559999999999998,
-        "coverage_95 (active)": 0.41339999999999993,
-        "PIT-KS (active mean)": 0.37900000000000006,
-        "reliability_ECE": 0.33742105263157895,
-        "TARP_ECE": 0.3384761904761905,
-        "posterior_spread(dex)": 0.04972118139266968
+        "n_posterior_samples": 90,
+        "coverage_68 (active)": 0.3753000000000001,
+        "coverage_95 (active)": 0.5871999999999999,
+        "PIT-KS (active mean)": 0.2820333333333333,
+        "reliability_ECE": 0.2503815789473684,
+        "TARP_ECE": 0.30014285714285716,
+        "posterior_spread(dex)": 0.0660199299454689
       },
       "J": {
         "prt_verdict": "no transfer (genuine)",
@@ -207,7 +207,7 @@
     }
   },
   "causal": {
-    "updated": "2026-07-09T22:38:24",
+    "updated": "2026-08-09T15:56:29",
     "n_seeds": 1,
     "sections": {
       "A": {
@@ -251,7 +251,7 @@
       },
       "G": {
         "INARA anomaly median": 0.8057727217674255,
-        "INARA anomaly p95": 1.8558274507522583,
+        "INARA anomaly p95": 1.8558275043964387,
         "real spectra found": 0
       },
       "H": {
@@ -260,13 +260,13 @@
         "mean dex-err (near-domain)": 2.0224669472772154
       },
       "I": {
-        "n_posterior_samples": 20,
-        "coverage_68 (active)": 0.1796,
-        "coverage_95 (active)": 0.319,
-        "PIT-KS (active mean)": 0.4526,
-        "reliability_ECE": 0.3778157894736842,
-        "TARP_ECE": 0.38047619047619047,
-        "posterior_spread(dex)": 0.04082835465669632
+        "n_posterior_samples": 30,
+        "coverage_68 (active)": 0.18750000000000003,
+        "coverage_95 (active)": 0.33790000000000003,
+        "PIT-KS (active mean)": 0.4345,
+        "reliability_ECE": 0.3714692982456141,
+        "TARP_ECE": 0.3835714285714286,
+        "posterior_spread(dex)": 0.04171738028526306
       },
       "J": {
         "prt_verdict": "no transfer (genuine)",

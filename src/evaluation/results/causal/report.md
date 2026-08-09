@@ -1,6 +1,6 @@
 # Evaluation report — `causal`
 
-*generated 2026-07-09T22:38:24*  ·  seeds [0]  ·  device `mps`  ·  ran 50/50 epochs  ·  git `aad036b02b15`
+*generated 2026-08-09T15:56:29*  ·  seeds [0]  ·  device `mps`  ·  ran 50/50 epochs  ·  git `aad036b02b15`
 
 > Reflected-light / direct-imaging retrieval (0.2–2.0 µm, LUVOIR-like). Each section states its epistemic status. The only LITERAL-ground-truth real tests are Sections E (solar-system) and F (real Earth); transiting-planet data (G, and 'far' rows of H) is a wrong-observable OOD probe, not an accuracy measurement.
 
@@ -16,6 +16,7 @@
 - **H** Published-retrieval comparison (benchmark exoplanets) — ✅ ok
 - **I** Posterior calibration (SBC / TARP / PIT / ECE) — 🟡 preliminary
 - **J** OOD honesty (δ/v, raw vs debiased R²) — ✅ ok
+- **K** Bayesian reference retrieval (information ceiling) — ⏭️ skipped
 
 ## Section A — In-distribution (INARA held-out test)  🟡
 *Ground truth: exact (synthetic). The information ceiling of the observable.*
@@ -265,33 +266,33 @@
 
 | metric | value |
 |---|---|
-| n_posterior_samples | 20 |
-| coverage_68 (active) | 0.1796 |
-| coverage_95 (active) | 0.3190 |
-| PIT-KS (active mean) | 0.4526 |
-| reliability_ECE | 0.3778 |
-| TARP_ECE | 0.3805 |
-| posterior_spread(dex) | 0.0408 |
+| n_posterior_samples | 30 |
+| coverage_68 (active) | 0.1875 |
+| coverage_95 (active) | 0.3379 |
+| PIT-KS (active mean) | 0.4345 |
+| reliability_ECE | 0.3715 |
+| TARP_ECE | 0.3836 |
+| posterior_spread(dex) | 0.0417 |
 
 **Per-species calibration**
 
 | species | cov68 | cov95 | PIT-KS | SBC χ² |
 |---|---|---|---|---|
-| H2O | 0.1660 | 0.3300 | 0.3980 | 1902.6000 |
-| CO2 | 0.2060 | 0.3480 | 0.3840 | 1794.0000 |
-| O2 | 0.1840 | 0.3460 | 0.4680 | 2499.0000 |
-| N2 | 0.0860 | 0.1620 | 0.4080 | 2987.0000 |
-| CH4 | 0.2260 | 0.3840 | 0.4220 | 1683.4000 |
-| N2O | 0.1880 | 0.3160 | 0.5460 | 2661.6000 |
-| CO | 0.0540 | 0.1020 | 0.5280 | 3707.5000 |
-| O3 | 0.2500 | 0.3980 | 0.4800 | 2386.0000 |
-| SO2 | 0.0340 | 0.0820 | 0.4880 | 3686.6000 |
-| NH3 | 0.2020 | 0.3520 | 0.5420 | 2516.3000 |
-| C2H6 | 0.0720 | 0.1460 | 0.5300 | 3365.8000 |
-| NO2 | 0.2680 | 0.4880 | 0.2680 | 1065.4000 |
+| H2O | 0.1830 | 0.3350 | 0.3720 | 3457.7000 |
+| CO2 | 0.2050 | 0.3580 | 0.3610 | 3193.9000 |
+| O2 | 0.2080 | 0.3850 | 0.4360 | 4023.2000 |
+| N2 | 0.0890 | 0.1660 | 0.4120 | 5912.3000 |
+| CH4 | 0.2340 | 0.4160 | 0.4040 | 2867.4000 |
+| N2O | 0.1920 | 0.3190 | 0.5100 | 4646.5000 |
+| CO | 0.0740 | 0.1220 | 0.4960 | 6847.2000 |
+| O3 | 0.2490 | 0.4300 | 0.4630 | 4253.6000 |
+| SO2 | 0.0520 | 0.1050 | 0.4650 | 6925.8000 |
+| NH3 | 0.2080 | 0.3810 | 0.5270 | 4281.5000 |
+| C2H6 | 0.0700 | 0.1400 | 0.5560 | 7002.5000 |
+| NO2 | 0.2740 | 0.5100 | 0.2530 | 1566.8000 |
 
 **Caveats**
-- Posterior = 20 samples (MC-dropout T=20 × 1 seed(s); dropout layers active=7); computed at the noiseless reference (α=300).
+- Posterior = 30 samples (MC-dropout T=30 × 1 seed(s); dropout layers active=7); computed at the noiseless reference (α=300).
 - Well-calibrated ⇒ 68% coverage∈[0.64,0.72], 95%∈[0.92,0.97], flat SBC/PIT, TARP on the diagonal. Inactive species (N2, CO) are expected to be wide (the model should report ignorance, not fabricate).
 - PRELIMINARY: n<3 seeds — limited deep-ensemble diversity.
 
@@ -319,4 +320,8 @@
 - A raw negative R² is never published without its debiased companion (this section).
 
 <sub>artifacts: `causal/ood_honesty/ood_delta_prt.png`, `causal/ood_honesty/ood_delta_taurex.png`, `causal/ood_honesty/ood_delta_psg.png`, `causal/ood_honesty/result.json`</sub>
+
+## Section K — Bayesian reference retrieval (information ceiling)  ⏭️
+
+> **Skipped.** no T0 reference — run `PYTHONPATH=src python -m evaluation.bayes.run_prior_is`
 

@@ -7,7 +7,7 @@
   "epistemic": "NO ground truth. Wrong observable \u2014 anomaly/stability only, never accuracy.",
   "headline": {
     "INARA anomaly median": 0.8057727217674255,
-    "INARA anomaly p95": 1.8558274507522583,
+    "INARA anomaly p95": 1.8558275043964387,
     "real spectra found": 0
   },
   "tables": [
@@ -51,7 +51,7 @@
   "data": {
     "inara_reference": {
       "median": 0.8057727217674255,
-      "p95": 1.8558274507522583
+      "p95": 1.8558275043964387
     },
     "probes": {
       "demo_transmission": {
@@ -60,5 +60,5 @@
       }
     }
   },
-  "generated_at": "2026-07-09T22:19:47"
+  "generated_at": "2026-08-09T15:26:02"
 }

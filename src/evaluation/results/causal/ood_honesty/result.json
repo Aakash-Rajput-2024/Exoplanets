@@ -97,7 +97,7 @@
           ],
           "mean_r2_raw": -3.0475046283938974,
           "mean_r2_debiased": -0.9546332019365155,
-          "mean_r2_pearson": 0.0018428376048753524
+          "mean_r2_pearson": 0.0018428376048753516
         },
         "verdict": "no transfer (genuine)"
       },
@@ -117,7 +117,7 @@
           ],
           "mean_r2_raw": -0.32511842124911805,
           "mean_r2_debiased": -0.12983658370439716,
-          "mean_r2_pearson": 0.001095205280998315
+          "mean_r2_pearson": 0.0010952052809983144
         },
         "verdict": "no transfer (genuine)"
       },
@@ -137,11 +137,11 @@
           ],
           "mean_r2_raw": 0.7473026202484099,
           "mean_r2_debiased": 0.7655489869106311,
-          "mean_r2_pearson": 0.7771018840044179
+          "mean_r2_pearson": 0.7771018840044178
         },
         "verdict": "biased extrapolation (fixable)"
       }
     }
   },
-  "generated_at": "2026-07-09T22:38:24"
+  "generated_at": "2026-08-09T15:56:29"
 }

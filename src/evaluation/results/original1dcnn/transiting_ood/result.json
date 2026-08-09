@@ -7,7 +7,7 @@
   "epistemic": "NO ground truth. Wrong observable \u2014 anomaly/stability only, never accuracy.",
   "headline": {
     "INARA anomaly median": 0.8057727217674255,
-    "INARA anomaly p95": 1.8558274507522583,
+    "INARA anomaly p95": 1.8558275043964387,
     "real spectra found": 0
   },
   "tables": [
@@ -24,7 +24,7 @@
           "DEMO: WASP-39b-like transmission",
           2.35,
           "2.9\u00d7",
-          0.0047
+          0.0032
         ]
       ]
     }
@@ -36,29 +36,29 @@
   ],
   "artifacts": [],
   "provenance": {
-    "epochs_run": 10,
-    "epochs_planned": 10,
-    "best_epoch": 10,
+    "epochs_run": 50,
+    "epochs_planned": 50,
+    "best_epoch": 50,
     "batch_size": 64,
     "loss": "huber",
     "lr": 0.001,
     "obs_mode": "contrast_snr",
     "label_transform": "clr",
     "input_norm": "per_lambda_asinh",
-    "git_commit": "aad036b02b155f754cc205a7869d10d5af2be803-dirty",
-    "config_hash": "dab61e7f17bd"
+    "git_commit": "3d7318bb26fb062e485bcddf4b469ed320a4ca97-dirty",
+    "config_hash": "f6a1e2a8fe68"
   },
   "data": {
     "inara_reference": {
       "median": 0.8057727217674255,
-      "p95": 1.8558274507522583
+      "p95": 1.8558275043964387
     },
     "probes": {
       "demo_transmission": {
         "anomaly": 2.3543171882629395,
-        "stability_std": 0.0046903290785849094
+        "stability_std": 0.0032391678541898727
       }
     }
   },
-  "generated_at": "2026-07-09T22:23:09"
+  "generated_at": "2026-08-09T15:23:13"
 }

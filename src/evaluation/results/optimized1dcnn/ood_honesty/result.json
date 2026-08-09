@@ -97,7 +97,7 @@
           ],
           "mean_r2_raw": -3.7359365216223943,
           "mean_r2_debiased": -1.3272701955411974,
-          "mean_r2_pearson": 0.0013827193658884933
+          "mean_r2_pearson": 0.001382719365888492
         },
         "verdict": "no transfer (genuine)"
       },
@@ -137,11 +137,11 @@
           ],
           "mean_r2_raw": 0.639363154107695,
           "mean_r2_debiased": 0.6603565328162988,
-          "mean_r2_pearson": 0.6722469024190858
+          "mean_r2_pearson": 0.6722469024190857
         },
         "verdict": "biased extrapolation (fixable)"
       }
     }
   },
-  "generated_at": "2026-07-09T22:20:22"
+  "generated_at": "2026-08-09T15:26:36"
 }

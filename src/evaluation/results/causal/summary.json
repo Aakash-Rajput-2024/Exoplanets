@@ -86,7 +86,7 @@
       "status": "ok",
       "headline": {
         "INARA anomaly median": 0.8057727217674255,
-        "INARA anomaly p95": 1.8558274507522583,
+        "INARA anomaly p95": 1.8558275043964387,
         "real spectra found": 0
       }
     },
@@ -103,13 +103,13 @@
       "suite": "calibration",
       "status": "preliminary",
       "headline": {
-        "n_posterior_samples": 20,
-        "coverage_68 (active)": 0.1796,
-        "coverage_95 (active)": 0.319,
-        "PIT-KS (active mean)": 0.4526,
-        "reliability_ECE": 0.3778157894736842,
-        "TARP_ECE": 0.38047619047619047,
-        "posterior_spread(dex)": 0.04082835465669632
+        "n_posterior_samples": 30,
+        "coverage_68 (active)": 0.18750000000000003,
+        "coverage_95 (active)": 0.33790000000000003,
+        "PIT-KS (active mean)": 0.4345,
+        "reliability_ECE": 0.3714692982456141,
+        "TARP_ECE": 0.3835714285714286,
+        "posterior_spread(dex)": 0.04171738028526306
       }
     },
     "J": {
@@ -120,6 +120,11 @@
         "taurex_verdict": "no transfer (genuine)",
         "psg_verdict": "biased extrapolation (fixable)"
       }
+    },
+    "K": {
+      "suite": "bayes_reference",
+      "status": "skipped",
+      "headline": {}
     }
   }
 }

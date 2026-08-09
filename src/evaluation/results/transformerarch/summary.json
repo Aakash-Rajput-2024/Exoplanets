@@ -1,9 +1,11 @@
 {
   "track": "transformerarch",
   "seeds": [
-    0
+    0,
+    1,
+    2
   ],
-  "n_seeds": 1,
+  "n_seeds": 3,
   "provenance": {
     "epochs_run": 48,
     "epochs_planned": 50,
@@ -20,17 +22,17 @@
   "sections": {
     "A": {
       "suite": "in_distribution",
-      "status": "preliminary",
+      "status": "ok",
       "headline": {
-        "R2_covered @a=1": 0.13823671638965607,
-        "R2_all12 @a=1": 0.0646807923913002,
-        "R2_covered noiseless-ref (a=300)": 0.5684410929679871,
-        "R2_all12 noiseless-ref": 0.36738601326942444,
-        "RMSE_all12 (dex) @a=1": 0.4431542158126831,
-        "n_seeds": 1,
+        "R2_covered @a=1": 0.13936635851860046,
+        "R2_all12 @a=1": 0.06505484133958817,
+        "R2_covered noiseless-ref (a=300)": 0.7683945298194885,
+        "R2_all12 noiseless-ref": 0.5117890238761902,
+        "RMSE_all12 (dex) @a=1": 0.44302308559417725,
+        "n_seeds": 3,
         "per_seed_R2_all12_mean\u00b1std": [
-          0.0646807923913002,
-          null
+          0.06297111262877782,
+          0.0015246886523857712
         ]
       }
     },
@@ -38,7 +40,7 @@
       "suite": "baselines",
       "status": "ok",
       "headline": {
-        "neural_all12_R2@a1": 0.0646807923913002,
+        "neural_all12_R2@a1": 0.06505484133958817,
         "Ridge_floor_R2": 0.030993184074759483,
         "beats_linear_floor": true
       }
@@ -47,18 +49,18 @@
       "suite": "cross_generator",
       "status": "ok",
       "headline": {
-        "native_R2_covered_ref": 0.5684410929679871,
-        "prt_R2_covered_ref": -1.0914045572280884,
-        "taurex_R2_covered_ref": -1.359340786933899
+        "native_R2_covered_ref": 0.7683945298194885,
+        "prt_R2_covered_ref": -0.8755117654800415,
+        "taurex_R2_covered_ref": -0.7964569330215454
       }
     },
     "D": {
       "suite": "psg_anchor",
       "status": "ok",
       "headline": {
-        "native_R2_covered_ref": 0.5684410929679871,
-        "anchor_R2_covered_ref": 0.5788819193840027,
-        "anchor/native": 1.0183674729803596,
+        "native_R2_covered_ref": 0.7683945298194885,
+        "anchor_R2_covered_ref": 0.7549697756767273,
+        "anchor/native": 0.9825288265054216,
         "PASS(\u22650.9\u00d7)": true
       }
     },
@@ -67,7 +69,7 @@
       "status": "ok",
       "headline": {
         "dominant-gas correct (terrestrial)": "2/4",
-        "mean dex-err covered (terrestrial)": 1.6501900552224926
+        "mean dex-err covered (terrestrial)": 1.6885382014282544
       }
     },
     "F": {
@@ -77,8 +79,8 @@
         "dominant true": "N2",
         "dominant pred": "O2",
         "dominant correct": false,
-        "mean dex-err (covered)": 1.8895006672542578,
-        "ordering \u03c1": 0.7510085782905936
+        "mean dex-err (covered)": 2.0087574401500747,
+        "ordering \u03c1": 0.7830421195446947
       }
     },
     "G": {
@@ -86,7 +88,7 @@
       "status": "ok",
       "headline": {
         "INARA anomaly median": 0.8057727217674255,
-        "INARA anomaly p95": 1.8558274507522583,
+        "INARA anomaly p95": 1.8558275043964387,
         "real spectra found": 0
       }
     },
@@ -96,20 +98,20 @@
       "headline": {
         "n_targets": 6,
         "n_near-domain (direct-imaging)": 2,
-        "mean dex-err (near-domain)": 1.9472384905550164
+        "mean dex-err (near-domain)": 2.07931188476378
       }
     },
     "I": {
       "suite": "calibration",
-      "status": "preliminary",
+      "status": "ok",
       "headline": {
-        "n_posterior_samples": 20,
-        "coverage_68 (active)": 0.16620000000000001,
-        "coverage_95 (active)": 0.29700000000000004,
-        "PIT-KS (active mean)": 0.533,
-        "reliability_ECE": 0.38231578947368416,
-        "TARP_ECE": 0.36819047619047623,
-        "posterior_spread(dex)": 0.056074175983667374
+        "n_posterior_samples": 90,
+        "coverage_68 (active)": 0.4484,
+        "coverage_95 (active)": 0.5999000000000001,
+        "PIT-KS (active mean)": 0.29044444444444445,
+        "reliability_ECE": 0.20365789473684207,
+        "TARP_ECE": 0.3401428571428571,
+        "posterior_spread(dex)": 0.09484101831912994
       }
     },
     "J": {
@@ -120,6 +122,11 @@
         "taurex_verdict": "no transfer (genuine)",
         "psg_verdict": "biased extrapolation (fixable)"
       }
+    },
+    "K": {
+      "suite": "bayes_reference",
+      "status": "skipped",
+      "headline": {}
     }
   }
 }
