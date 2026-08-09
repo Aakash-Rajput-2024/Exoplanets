@@ -19,7 +19,7 @@
     "grad_clip": 1.0,
     "patience": 15,
     "lambda_inv": 1.0,
-    "model_py": "/scratch/aakashr_iitp/Exoplanets/src/causal/cnn_trnas/model.py",
+    "model_py": "/Users/aakashrajput/MachineLearning/Exoplanets/src/models/causal/cnn_trnas/model.py",
     "model_cls": "NasaInaraTransformer",
     "desc": "Transformer backbone; exact-intervention counterfactual-invariance objective (--cf-invariance)",
     "track": "causal_cfi",
@@ -336,6 +336,39 @@
       "val_r2_a1": 0.005180964712053537,
       "val_r2_a10": 0.1265011876821518,
       "val_r2_a100": 0.17797915637493134
+    },
+    {
+      "epoch": 29,
+      "train_loss": 0.3392609488488971,
+      "val_loss": 0.32256288146007955,
+      "val_r2_log10": 0.09231875091791153,
+      "lr": 0.00044773576836617336,
+      "sec": 1670.6365489959717,
+      "val_r2_a1": 0.004058554768562317,
+      "val_r2_a10": 0.11550357192754745,
+      "val_r2_a100": 0.16501165926456451
+    },
+    {
+      "epoch": 30,
+      "train_loss": 0.3393746228969615,
+      "val_loss": 0.32561568321520196,
+      "val_r2_log10": 0.082249216735363,
+      "lr": 0.00041317591116653486,
+      "sec": 1665.2458980083466,
+      "val_r2_a1": 0.0017098536482080817,
+      "val_r2_a10": 0.10582583397626877,
+      "val_r2_a100": 0.14688411355018616
+    },
+    {
+      "epoch": 31,
+      "train_loss": 0.33858902071049246,
+      "val_loss": 0.31661785079564664,
+      "val_r2_log10": 0.10556497424840927,
+      "lr": 0.0003790390522001662,
+      "sec": 1700.6122233867645,
+      "val_r2_a1": 0.009592671878635883,
+      "val_r2_a10": 0.1307159662246704,
+      "val_r2_a100": 0.18537117540836334
     }
   ]
 }
