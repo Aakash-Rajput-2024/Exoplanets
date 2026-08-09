@@ -1,4 +1,4 @@
-"""Suite registry — the ordered A…J sections and selector resolution.
+"""Suite registry — the ordered A…K sections and selector resolution.
 
 ``run_eval`` iterates SUITES in order; each is gated by its own ``applicable(ctx)`` so a
 missing input (no cross-gen cache, no PSG anchor, …) is recorded as *skipped*, never a
@@ -9,12 +9,14 @@ from __future__ import annotations
 from evaluation.suites import (
     in_distribution, baselines, cross_generator, psg_anchor, solar_system,
     real_earth, transiting_ood, published_retrieval, calibration, ood_honesty,
+    bayes_reference,
 )
 
 # Report/run order = the narrative order of the sections.
 SUITES = [
     in_distribution, baselines, cross_generator, psg_anchor, solar_system,
     real_earth, transiting_ood, published_retrieval, calibration, ood_honesty,
+    bayes_reference,
 ]
 
 BY_SECTION = {m.SECTION: m for m in SUITES}

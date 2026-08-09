@@ -121,12 +121,25 @@ def _diag_val_r2(model, diag_raw, obs_mode, norm, label_pipe, device,
 
 
 def _save_resume(path, next_epoch, model, optimizer, scheduler, loader_gen,
-                 best_val, no_improve, history):
+                 best_val, no_improve, history,
+                 batch_idx=0, running_loss=0.0, epoch_gen=None, epoch_elapsed=0.0):
     """Atomically write a full resumable state: model + optimizer + scheduler +
     RNG states + loader shuffle position + bookkeeping. Written to a temp file and
-    os.replace'd, so a crash mid-save cannot corrupt the resume point."""
+    os.replace'd, so a crash mid-save cannot corrupt the resume point.
+
+    ``batch_idx`` > 0 marks a MID-EPOCH snapshot: ``next_epoch`` is then the epoch
+    still in progress rather than the next one to start, and ``epoch_gen`` holds
+    the loader RNG state as it was at that epoch's FIRST batch. Restoring that
+    state rebuilds the identical shuffle order, so the resumed run can fast-forward
+    over the ``batch_idx`` batches it already trained on and continue on exactly
+    the samples it had not reached.
+    """
     blob = {
         "next_epoch": next_epoch,
+        "batch_idx": batch_idx,
+        "running_loss": running_loss,
+        "epoch_gen": epoch_gen,
+        "epoch_elapsed": epoch_elapsed,
         "model": model.state_dict(),
         "optim": optimizer.state_dict(),
         "sched": scheduler.state_dict(),
@@ -166,12 +179,16 @@ def _load_resume(path, model, optimizer, scheduler, loader_gen, device):
             torch.mps.set_rng_state(ck["mps_rng"].cpu())
     except Exception as e:
         print(f"  [resume] RNG restore partial ({e}); trajectory may differ slightly.")
-    return ck["next_epoch"], ck["best_val"], ck["no_improve"], ck["history"]
+    # .get() defaults keep checkpoints written before mid-epoch support loadable:
+    # they simply resume at an epoch boundary, as they always did.
+    return (ck["next_epoch"], ck["best_val"], ck["no_improve"], ck["history"],
+            ck.get("batch_idx", 0), ck.get("running_loss", 0.0),
+            ck.get("epoch_gen"), ck.get("epoch_elapsed", 0.0))
 
 
 def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
               num_workers=0, cloud=None, resume=False, diag=False, cf=False,
-              cf_invariance=False, lambda_inv=None):
+              cf_invariance=False, lambda_inv=None, save_every=300):
     cfg = track_config(track)
     if epochs is not None:
         cfg["epochs"] = epochs
@@ -245,11 +262,15 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
     history = []  # per-epoch dicts
     start_epoch = 0
     resume_path = os.path.join(ckpt_dir, f"last_{track}_seed{seed}{suffix}.pth")
+    resume_batch, resume_loss, resume_gen, resume_elapsed = 0, 0.0, None, 0.0
     if resume and os.path.exists(resume_path) and not smoke:
-        start_epoch, best_val, no_improve, history = _load_resume(
+        (start_epoch, best_val, no_improve, history,
+         resume_batch, resume_loss, resume_gen, resume_elapsed) = _load_resume(
             resume_path, model, optimizer, scheduler, loader_gen, device)
-        print(f"  [resume] {os.path.basename(resume_path)}: continuing at epoch "
-              f"{start_epoch + 1}/{cfg['epochs']} (best_val={best_val:.5f})")
+        where = (f"epoch {start_epoch + 1}/{cfg['epochs']} batch {resume_batch}"
+                 if resume_batch else f"epoch {start_epoch + 1}/{cfg['epochs']}")
+        print(f"  [resume] {os.path.basename(resume_path)}: continuing at "
+              f"{where} (best_val={best_val:.5f})")
         if start_epoch >= cfg["epochs"]:
             print("  [resume] run already complete — skipping training.")
 
@@ -264,14 +285,40 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
         except Exception as e:
             print(f"  [diag] disabled (setup failed: {e})")
 
+    # Outer bar tracks the whole run; the inner bar (below) tracks one epoch, so a
+    # long job shows both "how far into this epoch" and "how far overall".
+    epoch_bar = tqdm(total=cfg["epochs"], initial=start_epoch, position=0, leave=True,
+                     desc=f"{track} s{seed}", unit="ep",
+                     bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} ep [{elapsed}<{remaining}]")
+
     for epoch in range(start_epoch, cfg["epochs"]):
         # Fresh, reproducible noise realization this epoch (C1 augmentation).
         if data.train_collate is not None and hasattr(data.train_collate, "set_epoch"):
             data.train_collate.set_epoch(epoch)
 
+        # The shuffle permutation is drawn from loader_gen when the iterator is
+        # created, so the generator state must be positioned BEFORE that happens:
+        # restore the saved start-of-epoch state when resuming into a partial
+        # epoch, otherwise record the current state as this epoch's anchor.
+        if resume_batch and resume_gen is not None and loader_gen is not None:
+            loader_gen.set_state(resume_gen.cpu())
+            epoch_gen = resume_gen
+        else:
+            epoch_gen = loader_gen.get_state() if loader_gen is not None else None
+
         model.train()
-        tl, t0 = 0.0, time.time()
-        for x, y in tqdm(train_loader, desc=f"E{epoch+1}/{cfg['epochs']} train"):
+        tl = resume_loss
+        t0 = time.time() - resume_elapsed
+        last_save = time.time()
+        n_batches = len(train_loader)
+        batch_bar = tqdm(total=n_batches, initial=resume_batch, position=1, leave=False,
+                         desc=f"  E{epoch+1}/{cfg['epochs']}", unit="b")
+        for bi, (x, y) in enumerate(train_loader):
+            # Fast-forward: these batches were already trained on before the
+            # interrupt. Optimizer/scheduler/model state already reflect them, so
+            # they must be consumed (to advance the iterator) but not re-applied.
+            if bi < resume_batch:
+                continue
             optimizer.zero_grad()
             if x.dim() == 4:
                 # (2, B, C, L) anchor/counterfactual pair (CFInvarianceCollate):
@@ -290,7 +337,21 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
             optimizer.step()
             scheduler.step()
             tl += loss.item()
-        tl /= max(1, len(train_loader))
+            batch_bar.update(1)
+
+            # Mid-epoch snapshot. On a 940 s/epoch transformer run an interrupt
+            # would otherwise discard up to a full epoch of work; this caps the
+            # loss at `save_every` seconds.
+            if resume and not smoke and (time.time() - last_save) >= save_every:
+                _save_resume(resume_path, epoch, model, optimizer, scheduler,
+                             loader_gen, best_val, no_improve, history,
+                             batch_idx=bi + 1, running_loss=tl, epoch_gen=epoch_gen,
+                             epoch_elapsed=time.time() - t0)
+                last_save = time.time()
+                batch_bar.set_postfix_str(f"ckpt@{bi+1}")
+        batch_bar.close()
+        resume_batch, resume_loss, resume_elapsed, resume_gen = 0, 0.0, 0.0, None
+        tl /= max(1, n_batches)
 
         vl, vr2 = _val_pass(model, val_loader, criterion, device, data.label_pipe)
         lr_now = float(optimizer.param_groups[0]["lr"])
@@ -325,12 +386,18 @@ def train_one(track, seed, cache_dir=CACHE_V2, epochs=None, smoke=False,
         if resume and not smoke:
             # Re-generate resume_path to ensure we write to the track-specific name
             actual_resume_path = os.path.join(ckpt_dir, f"last_{track}_seed{seed}{suffix}.pth")
+            # batch_idx=0 marks a clean epoch boundary, so a resume from here
+            # starts epoch+1 fresh rather than fast-forwarding.
             _save_resume(actual_resume_path, epoch + 1, model, optimizer, scheduler,
-                         loader_gen, best_val, no_improve, history)
+                         loader_gen, best_val, no_improve, history, batch_idx=0)
+
+        epoch_bar.update(1)
+        epoch_bar.set_postfix(val=f"{vl:.4f}", r2=f"{vr2:.3f}")
 
         if no_improve >= cfg["patience"]:
             print(f"  early stopping (no improvement for {no_improve} epochs)")
             break
+    epoch_bar.close()
 
     # --- persist logs + curves ------------------------------------------------
     tag = f"{track}_seed{seed}{suffix}"
@@ -393,6 +460,10 @@ def main():
                          "never used for model selection)")
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--num-workers", type=int, default=0)
+    ap.add_argument("--save-every", type=int, default=300, metavar="SECONDS",
+                    help="mid-epoch resume snapshot interval (default 300s). Only "
+                         "active with --resume. Lower = less work lost to an "
+                         "interrupt, at the cost of more checkpoint writes.")
     a = ap.parse_args()
 
     cfg = track_config(a.track)
@@ -401,7 +472,8 @@ def main():
         train_one(a.track, s, cache_dir=a.cache, epochs=a.epochs,
                   smoke=a.smoke, num_workers=a.num_workers, cloud=a.cloud,
                   resume=a.resume, diag=a.diag, cf=a.cf,
-                  cf_invariance=a.cf_invariance, lambda_inv=a.lambda_inv)
+                  cf_invariance=a.cf_invariance, lambda_inv=a.lambda_inv,
+                  save_every=a.save_every)
 
 
 if __name__ == "__main__":

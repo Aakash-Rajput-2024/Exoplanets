@@ -22,6 +22,19 @@ A ``LabelPipeline`` bundles (transform -> per-species standardization fitted on
 TRAIN). ``encode`` maps linear labels to standardized training targets;
 ``decode`` maps a model's standardized output back to linear mole fractions.
 decode(encode(y)) == y (to float tolerance) for all three kinds.
+
+ILR — required by anything that puts a DENSITY on the labels
+    CLR output is exactly zero-sum, so the 12 coordinates are rank-11 and any
+    probability density over them is singular: a normalizing flow, a KDE prior, or a
+    nested sampler's unit-cube transform will diverge or silently collapse on it. That
+    is fine for the point-estimating regressors (they never need a density) but not for
+    the Bayesian tiers in ``evaluation.bayes`` / ``models.npe``.
+
+    ``to_ilr`` / ``from_ilr`` map to an orthonormal basis of the zero-sum hyperplane
+    (Helmert contrasts), giving 11 unconstrained coordinates with a non-degenerate
+    density. The round trip through ``from_ilr`` -> softmax lands on the simplex
+    interior by construction, so every posterior sample is a valid composition — the
+    same guarantee CLR gives the regressors.
 """
 
 from __future__ import annotations
@@ -53,6 +66,50 @@ def _inverse(t: torch.Tensor, kind: str) -> torch.Tensor:
     if kind == "clr":
         return torch.softmax(t, dim=-1)
     raise ValueError(f"unknown label transform {kind!r}")
+
+
+def helmert_basis(d: int = 12, dtype=torch.float32, device=None) -> torch.Tensor:
+    """Orthonormal basis of {t ∈ R^d : Σ t = 0}, as a (d-1, d) matrix H.
+
+    Satisfies H @ Hᵀ = I_{d-1} and H @ 1 = 0, so Hᵀ @ H is the projector onto the
+    zero-sum hyperplane. Row k contrasts the first k coordinates against the (k+1)-th:
+
+        H[k] = (1, …, 1, −k, 0, …, 0) / sqrt(k(k+1))     (k ones)
+
+    Built in float64 and cast at the end — the 1/sqrt(k(k+1)) normalisation loses
+    orthogonality in float32 for the later rows otherwise.
+    """
+    H = torch.zeros(d - 1, d, dtype=torch.float64)
+    for k in range(1, d):
+        H[k - 1, :k] = 1.0
+        H[k - 1, k] = -float(k)
+        H[k - 1] /= (k * (k + 1.0)) ** 0.5
+    return H.to(dtype=dtype, device=device)
+
+
+def to_ilr(y_lin: torch.Tensor, H: torch.Tensor | None = None) -> torch.Tensor:
+    """Linear mole fractions (..., d) -> ILR coordinates (..., d-1).
+
+    Composition of the CLR map with a rotation into the Helmert basis, so it inherits
+    CLR's scale invariance while dropping the redundant coordinate.
+    """
+    t = _transform(y_lin, "clr")
+    if H is None:
+        H = helmert_basis(y_lin.shape[-1], dtype=t.dtype, device=t.device)
+    return t @ H.T
+
+
+def from_ilr(z: torch.Tensor, H: torch.Tensor | None = None) -> torch.Tensor:
+    """ILR coordinates (..., d-1) -> linear mole fractions (..., d) on the simplex.
+
+    Exact inverse of ``to_ilr`` for any composition: rotating back gives the CLR vector
+    (already zero-sum by construction, since Hᵀz lies in the hyperplane) and softmax is
+    CLR's inverse. Output is strictly positive and sums to 1 for ANY finite z, which is
+    what makes it safe as a sampler/flow output space.
+    """
+    if H is None:
+        H = helmert_basis(z.shape[-1] + 1, dtype=z.dtype, device=z.device)
+    return torch.softmax(z @ H, dim=-1)
 
 
 class LabelPipeline:
